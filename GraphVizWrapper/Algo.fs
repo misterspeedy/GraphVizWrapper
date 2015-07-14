@@ -2,3 +2,4 @@
 
 type Algo =
 | Dot
+| Neato

@@ -5,13 +5,19 @@ open NUnit.Framework
 open FsUnit
 open GraphVizWrapper
 
+[<AutoOpen>]
+module __ =
+   [<Literal>]
+   let emptyGraph = "graph {}"
+   [<Literal>]
+   let emptyDigraph = "digraph {}"
+   [<Literal>]
+   let oneNodeGraph = "graph { a; }"
+   [<Literal>]
+   let oneNodeDigraph = "digraph { a; }"
+
 [<TestFixture>]
 type InvocationTests() =
-
-   let createFile content =
-      let name = System.IO.Path.GetTempFileName()
-      File.WriteAllText(name, content)
-      name
 
    // Invalid input:
 
@@ -39,8 +45,8 @@ type InvocationTests() =
 
    // Dot for svg:
 
-   [<TestCase("graph {}")>]
-   [<TestCase("digraph {}")>]
+   [<TestCase(emptyGraph)>]
+   [<TestCase(emptyDigraph)>]
    member __.``Invoking the dot for svg command with a file containing a valid but empty graph generates an SVG file representing a blank page``(dotContent) =
       let expected = File.ReadAllText(@"..\..\TestFiles\valid-dot-no-content.svg")
       let actual = 
@@ -50,8 +56,8 @@ type InvocationTests() =
          | Failure _ -> ""
       actual |> should equal expected
 
-   [<TestCase("graph { a; }")>]
-   [<TestCase("digraph { a; }")>]
+   [<TestCase(oneNodeGraph)>]
+   [<TestCase(oneNodeDigraph)>]
    member __.``Invoking the dot for svg command with a file containing a single node generates an SVG file representing that node``(dotContent) =
       let expected = File.ReadAllText(@"..\..\TestFiles\valid-dot-one-node.svg")
       let actual = 
@@ -63,8 +69,8 @@ type InvocationTests() =
 
    // Neato for svg:
 
-   [<TestCase("graph {}")>]
-   [<TestCase("digraph {}")>]
+   [<TestCase(emptyGraph)>]
+   [<TestCase(emptyDigraph)>]
    member __.``Invoking the neato for svg command with a file containing a valid but empty graph generates an SVG file representing a blank page``(dotContent) =
       let expected = File.ReadAllText(@"..\..\TestFiles\valid-neato-no-content.svg")
       let actual = 
@@ -74,8 +80,8 @@ type InvocationTests() =
          | Failure _ -> ""
       actual |> should equal expected
 
-   [<TestCase("graph { a; }")>]
-   [<TestCase("digraph { a; }")>]
+   [<TestCase(oneNodeGraph)>]
+   [<TestCase(oneNodeDigraph)>]
    member __.``Invoking the neato for svg command with a file containing a single node generates an SVG file representing that node``(dotContent) =
       let expected = File.ReadAllText(@"..\..\TestFiles\valid-neato-one-node.svg")
       let actual = 
@@ -87,8 +93,8 @@ type InvocationTests() =
 
    // Dot for gif:
 
-   [<TestCase("graph {}")>]
-   [<TestCase("digraph {}")>]
+   [<TestCase(emptyGraph)>]
+   [<TestCase(emptyDigraph)>]
    member __.``Invoking the dot for gif command with a file containing a valid but empty graph generates a GIF file representing a blank page``(dotContent) =
       let expected = File.ReadAllBytes(@"..\..\TestFiles\valid-dot-no-content.gif")
       let actual = 
@@ -98,8 +104,8 @@ type InvocationTests() =
          | Failure _ -> [||]
       actual |> should equal expected
 
-   [<TestCase("graph { a; }")>]
-   [<TestCase("digraph { a; }")>]
+   [<TestCase(oneNodeGraph)>]
+   [<TestCase(oneNodeDigraph)>]
    member __.``Invoking the dot for gif command with a file containing a single node generates a GIF file representing that node``(dotContent) =
       let expected = File.ReadAllBytes(@"..\..\TestFiles\valid-dot-one-node.gif")
       let actual = 

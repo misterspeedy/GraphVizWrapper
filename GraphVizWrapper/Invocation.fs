@@ -17,10 +17,6 @@ module Invocation =
       use ms = new MemoryStream()
       sr.BaseStream.CopyTo(ms)
       ms.ToArray()
-//      let buf = ms.GetBuffer()
-//      let result = Array.zeroCreate buf.Length
-//      buf.CopyTo(result, buf.Length)
-//      result  
 
    // Shell out to run a command line program
    let private startProcessAndCaptureOutput cmd cmdParams (resultFormat : ResultFormat) (stdInContent : string) = 
@@ -38,8 +34,6 @@ module Invocation =
          use stdError = p.StandardError
          let message = stdError.ReadToEnd()
          if System.String.IsNullOrWhiteSpace message then
-            // TODO there may be some encoding-sensitivity here when using
-            // non-text graphics formats (eg. gif)
             match resultFormat with
             | Text ->
                let content = p.StandardOutput.ReadToEnd()
@@ -66,4 +60,4 @@ module Invocation =
          let commandPath = Path.ChangeExtension(Path.Combine(graphVizPath, commandName), ".exe")
          let outputTypeParam = (getUnionCaseName outputType).ToLowerInvariant()
          let paramString = sprintf "-T%s" outputTypeParam
-         startProcessAndCaptureOutput commandPath paramString (outputType.ToResultFormat()) dotContent
+         startProcessAndCaptureOutput commandPath paramString (outputType.ResultFormat()) dotContent

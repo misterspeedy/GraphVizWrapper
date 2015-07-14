@@ -4,7 +4,7 @@ type OutputType =
 | Svg
 | Gif
 with 
-   member this.ToResultFormat() =
+   member this.ResultFormat() =
       match this with
       | Svg -> ResultFormat.Text
       | Gif -> ResultFormat.Binary

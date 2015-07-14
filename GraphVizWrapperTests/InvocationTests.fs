@@ -113,7 +113,6 @@ type InvocationTests() =
          | SuccessText _ -> [||]
          | SuccessBinary content -> content
          | Failure _ -> [||]
-      //File.WriteAllBytes(@"C:\temp\valid-dot-one-node.gif", actual)
       actual |> should equal expected
 
    // Dot for png:
@@ -127,7 +126,6 @@ type InvocationTests() =
          | SuccessText _ -> [||]
          | SuccessBinary content -> content
          | Failure _ -> [||]
-      //File.WriteAllBytes(@"C:\temp\valid-dot-no-content.png", actual)
       actual |> should equal expected
 
    [<TestCase(oneNodeGraph)>]
@@ -139,7 +137,6 @@ type InvocationTests() =
          | SuccessText _ -> [||]
          | SuccessBinary content -> content
          | Failure _ -> [||]
-      //File.WriteAllBytes(@"C:\temp\valid-dot-one-node.png", actual)
       actual |> should equal expected
 
    // Dot for jpg:

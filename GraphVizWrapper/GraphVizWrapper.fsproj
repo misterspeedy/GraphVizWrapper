@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="CommandResult.fs" />
     <Compile Include="Algo.fs" />
+    <Compile Include="OutputType.fs" />
     <Compile Include="Invocation.fs" />
   </ItemGroup>
   <PropertyGroup>

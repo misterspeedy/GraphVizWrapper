@@ -13,8 +13,17 @@ module Invocation =
        match FSharpValue.GetUnionFields(x, typeof<'a>) with
        | case, _ -> case.Name  
 
+   let toByteArray (sr : StreamReader) =
+      use ms = new MemoryStream()
+      sr.BaseStream.CopyTo(ms)
+      ms.ToArray()
+//      let buf = ms.GetBuffer()
+//      let result = Array.zeroCreate buf.Length
+//      buf.CopyTo(result, buf.Length)
+//      result  
+
    // Shell out to run a command line program
-   let private startProcessAndCaptureOutput cmd cmdParams (stdInContent : string) = 
+   let private startProcessAndCaptureOutput cmd cmdParams (resultFormat : ResultFormat) (stdInContent : string) = 
       let si = 
          new System.Diagnostics.ProcessStartInfo(cmd, cmdParams,
             UseShellExecute = false,
@@ -29,8 +38,15 @@ module Invocation =
          use stdError = p.StandardError
          let message = stdError.ReadToEnd()
          if System.String.IsNullOrWhiteSpace message then
-            let content = p.StandardOutput.ReadToEnd()
-            CommandResult.Success content
+            // TODO there may be some encoding-sensitivity here when using
+            // non-text graphics formats (eg. gif)
+            match resultFormat with
+            | Text ->
+               let content = p.StandardOutput.ReadToEnd()
+               CommandResult.SuccessText content
+            | Binary -> 
+               let content = p.StandardOutput |> toByteArray
+               CommandResult.SuccessBinary content
          elif message.Contains "syntax error" then
             CommandResult.Failure (sprintf "Invalid input content: %s" message)
          else 
@@ -40,7 +56,7 @@ module Invocation =
          let message = stdError.ReadToEnd()
          CommandResult.Failure message
 
-   let Call (algo : Algo, dotContent : string) =
+   let Call (algo : Algo, outputType : OutputType, dotContent : string) =
       if dotContent = null then
          CommandResult.Failure "Null input"
       elif dotContent.Trim().Length = 0 then
@@ -48,5 +64,6 @@ module Invocation =
       else
          let commandName = (getUnionCaseName algo).ToLowerInvariant()
          let commandPath = Path.ChangeExtension(Path.Combine(graphVizPath, commandName), ".exe")
-         let paramString = sprintf "-Tsvg" 
-         startProcessAndCaptureOutput commandPath paramString dotContent
+         let outputTypeParam = (getUnionCaseName outputType).ToLowerInvariant()
+         let paramString = sprintf "-T%s" outputTypeParam
+         startProcessAndCaptureOutput commandPath paramString (outputType.ToResultFormat()) dotContent

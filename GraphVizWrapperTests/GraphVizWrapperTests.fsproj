@@ -58,7 +58,14 @@
     <None Include="TestFiles\valid-dot-one-node.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestFiles\valid-neato-one-node.svg" />
+    <None Include="TestFiles\valid-neato-one-node.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\valid-neato-no-content.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\valid-dot-no-content.gif" />
+    <None Include="TestFiles\valid-dot-one-node.gif" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FsUnit.NUnit">

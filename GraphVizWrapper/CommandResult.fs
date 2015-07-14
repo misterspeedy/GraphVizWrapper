@@ -1,8 +1,11 @@
 ﻿namespace GraphVizWrapper
 
-open System.IO
+type ResultFormat =
+| Text
+| Binary
 
 type CommandResult =
-| Success of content:string
+| SuccessText of content:string
+| SuccessBinary of content:array<byte>
 | Failure of message:string
 

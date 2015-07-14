@@ -3,8 +3,12 @@
 type OutputType =
 | Svg
 | Gif
+| Jpg
+| Png
 with 
    member this.ResultFormat() =
       match this with
       | Svg -> ResultFormat.Text
-      | Gif -> ResultFormat.Binary
+      | Gif
+      | Jpg
+      | Png -> ResultFormat.Binary

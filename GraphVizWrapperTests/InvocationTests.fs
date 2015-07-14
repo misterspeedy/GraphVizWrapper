@@ -115,3 +115,55 @@ type InvocationTests() =
          | Failure _ -> [||]
       //File.WriteAllBytes(@"C:\temp\valid-dot-one-node.gif", actual)
       actual |> should equal expected
+
+   // Dot for png:
+
+   [<TestCase(emptyGraph)>]
+   [<TestCase(emptyDigraph)>]
+   member __.``Invoking the dot for png command with a file containing a valid but empty graph generates a PNG file representing a blank page``(dotContent) =
+      let expected = File.ReadAllBytes(@"..\..\TestFiles\valid-dot-no-content.png")
+      let actual = 
+         match GraphVizWrapper.Invocation.Call(Algo.Dot, OutputType.Png, dotContent) with
+         | SuccessText _ -> [||]
+         | SuccessBinary content -> content
+         | Failure _ -> [||]
+      //File.WriteAllBytes(@"C:\temp\valid-dot-no-content.png", actual)
+      actual |> should equal expected
+
+   [<TestCase(oneNodeGraph)>]
+   [<TestCase(oneNodeDigraph)>]
+   member __.``Invoking the dot for png command with a file containing a single node generates a PNG file representing that node``(dotContent) =
+      let expected = File.ReadAllBytes(@"..\..\TestFiles\valid-dot-one-node.png")
+      let actual = 
+         match GraphVizWrapper.Invocation.Call(Algo.Dot, OutputType.Png, dotContent) with
+         | SuccessText _ -> [||]
+         | SuccessBinary content -> content
+         | Failure _ -> [||]
+      //File.WriteAllBytes(@"C:\temp\valid-dot-one-node.png", actual)
+      actual |> should equal expected
+
+   // Dot for jpg:
+
+   [<TestCase(emptyGraph)>]
+   [<TestCase(emptyDigraph)>]
+   member __.``Invoking the dot for jpg command with a file containing a valid but empty graph generates a JPG file representing a blank page``(dotContent) =
+      let expected = File.ReadAllBytes(@"..\..\TestFiles\valid-dot-no-content.jpg")
+      let actual = 
+         match GraphVizWrapper.Invocation.Call(Algo.Dot, OutputType.Jpg, dotContent) with
+         | SuccessText _ -> [||]
+         | SuccessBinary content -> content
+         | Failure _ -> [||]
+      //File.WriteAllBytes(@"C:\temp\valid-dot-no-content.jpg", actual)
+      actual |> should equal expected
+
+   [<TestCase(oneNodeGraph)>]
+   [<TestCase(oneNodeDigraph)>]
+   member __.``Invoking the dot for jpg command with a file containing a single node generates a JPG file representing that node``(dotContent) =
+      let expected = File.ReadAllBytes(@"..\..\TestFiles\valid-dot-one-node.jpg")
+      let actual = 
+         match GraphVizWrapper.Invocation.Call(Algo.Dot, OutputType.Jpg, dotContent) with
+         | SuccessText _ -> [||]
+         | SuccessBinary content -> content
+         | Failure _ -> [||]
+      //File.WriteAllBytes(@"C:\temp\valid-dot-one-node.jpg", actual)
+      actual |> should equal expected

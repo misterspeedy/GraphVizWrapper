@@ -57,21 +57,49 @@ type Statement =
          sprintf "%O;" n.Id
       | EdgeStatement(n1, n2, et) ->
          sprintf "%O %O %O;" n1 et n2
+
+type AttributeStatementType =
+| Graph
+| Node
+| Edge
+
+type Attribute (key : Id, value : Id) =
+   member __.Key = key
+   member __.Value = value
+   override this.ToString() =
+      sprintf "%s = %s" (this.Key.ToString() |> quote) (this.Key.ToString() |> quote)
+
+type AttributeStatement(attributeStatementType : AttributeStatementType, attributes : Attribute list) =
+   member __.Attributes = attributes
+   override __.ToString() =
+      seq {
+         yield "[ "
+         for attribute in attributes do
+            yield attribute.ToString()
+            yield "; "
+         yield "]"
+      } |> Seq.reduce (+)
+
 type Graph(id : Id, strictness: Strictness, kind : GraphKind, statements : Statement list) =
+   new (id : Id, strictness: Strictness, kind : GraphKind) =
+      Graph(id, strictness, kind, [])
    member __.Id = id
    member __.Strictness = strictness
    member __.Kind = kind
+   member __.Statements = statements
+   member this.WithStatement(statement : Statement) =
+      Graph(this.Id, this.Strictness, this.Kind, statement::this.Statements)
    override this.ToString() =
       let sb = StringBuilder()
       let (~~) (text:string) = sb.Append text |> ignore
       let (~~~) (text:string) = ~~text; ~~" "
       let (~~~~) (text:string) = sb.AppendLine text |> ignore
-      ~~~ this.Strictness.ToString()
+      if this.Strictness = Strict then
+         ~~~ this.Strictness.ToString()
       ~~~ this.Kind.ToString()
       ~~~ (this.Id.ToString() |> quote)
       ~~~~ "{"
       for statement in statements do
          ~~~~ statement.ToString()
       ~~~~ "}"
-      sb.ToString().Trim()
-      
+      sb.ToString()

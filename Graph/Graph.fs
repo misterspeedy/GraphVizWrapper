@@ -6,6 +6,7 @@ namespace GraphVizWrapper
 open System
 open Microsoft.FSharp.Reflection
 open System.Collections.Generic
+open System.Drawing
 
 [<AutoOpen>]
 module __ =
@@ -16,6 +17,8 @@ module __ =
       match Double.TryParse(s) with
       | true, _ -> true
       | _ -> false
+   let isBool s =
+      s = "true" || s = "false"
    let quote s =
       sprintf "\"%s\"" s
    let dictToAttrList (dict : Dictionary<string, string>) =
@@ -24,7 +27,7 @@ module __ =
             dict
             |> Seq.map (fun kvp -> 
                let valueStr =
-                  if kvp.Value |> isNumber then
+                  if kvp.Value |> isNumber || kvp.Value |> isBool then
                      kvp.Value
                   else
                      kvp.Value |> quote
@@ -36,6 +39,12 @@ module __ =
          sprintf "  [ %s ]" (String.Join("; ", pairs))
       else
          ""
+
+   let colorToString (c : Color) =
+      if c.IsNamedColor then
+         c.Name
+      else
+         sprintf "#%02x%02x%02x%02x" c.A c.R c.G c.B
 
 type Strictness =
 | Strict
@@ -121,6 +130,52 @@ type Attributes(statementType : AttributeStatementType, attributes : Attribute l
             this.StatementType
             (String.Join (";", [| for attribute in attributes -> attribute.ToString() |]))
 
+type GraphVizRect = 
+   {
+      llx : double
+      lly : double
+      urx : double
+      ury : double
+   }
+      override this.ToString() =
+         sprintf "%g,%g,%g,%g" this.llx this.lly this.urx this.ury
+
+type WeightedColor =
+   {
+      WColor : Color
+      Weight : float option
+   }
+      override this.ToString() =
+         sprintf "%s%s" 
+            (this.WColor |> colorToString) 
+            (match this.Weight with | Some w -> sprintf ";%g" w | None -> "")
+
+type WeightedColorList() =
+   let mutable list : WeightedColor list = []
+   let totalWeight items =
+      items |> List.sumBy (fun wc -> match wc.Weight with | Some w -> w | _ -> 0.)
+   member __.Add(weightedColor : WeightedColor) =
+      let newList = weightedColor :: list
+      if newList |> totalWeight <= 1.0 then
+         list <- newList
+      else
+         raise (ArgumentException("Color weights cannot add up to more than 1.0"))
+   override __.ToString() =
+      let items = 
+         list
+         |> List.rev
+         |> List.map (fun wc -> wc.ToString())
+         |> Array.ofList
+      String.Join(":", items)
+
+type GraphColor =
+| SingleColor of Color
+| ColorList of WeightedColorList
+   override this.ToString() =
+      match this with
+      | SingleColor c -> c |> colorToString
+      | ColorList cl -> cl.ToString()
+
 type Graph
    (
       id : Id, 
@@ -132,6 +187,16 @@ type Graph
 //      edgeAttributes : Attributes
    ) =
    let defaultDamping = 0.99
+   let defaultK = 0.3
+   let defaultUrl = ""
+   let defaultBackground = ""
+   let defaultBb : GraphVizRect option = None
+   // TODO colorlist
+   let defaultBgColor : GraphColor option = None
+   let defaultCenter = false
+   let defaultCharSet = "UTF-8"
+   let defaultClusterRank = "local"
+   let defaultColor : GraphColor = GraphColor.SingleColor(Color.Black)
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -142,10 +207,43 @@ type Graph
    member __.Kind = kind
    member __.Statements = statements
    member val Damping = defaultDamping with get, set
+   member val K = defaultK with get, set
+   member val Url = defaultUrl with get, set
+   member val Background = defaultBackground with get, set
+   member val Bb = defaultBb with get, set
+   member val BgColor = defaultBgColor with get, set
+   member val Center = defaultCenter with get, set
+   member val Charset = defaultCharSet with get, set
+   member val ClusterRank = defaultClusterRank with get, set
+   member val Color = defaultColor with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
+      // TODO could consider putting an attribute on the relevant members
+      // and iterating over them using reflection
       if this.Damping <> defaultDamping then
          dict.["Damping"] <- this.Damping.ToString()
+      if this.K <> defaultK then
+         dict.["K"] <- this.K.ToString()
+      if this.Url <> defaultUrl then
+         dict.["URL"] <- this.Url
+      if this.Background <> defaultBackground then
+         dict.["_background"] <- this.Background
+      match this.Bb with
+      | Some r -> dict.["bb"] <- r.ToString()
+      | _ -> ()
+      match this.BgColor with
+      | Some c -> 
+         dict.["bgcolor"] <- c.ToString()
+      | _ -> ()
+      if this.Center then
+         dict.["center"] <- "true"
+      if this.Charset <> defaultCharSet then
+         dict.["charset"] <- this.Charset
+      if this.ClusterRank <> defaultClusterRank then
+         dict.["clusterrank"] <- this.ClusterRank
+      if this.Color <> defaultColor then
+         dict.["color"] <- this.Color.ToString()
+
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes
 //   member __.NodeAttributes = nodeAttributes

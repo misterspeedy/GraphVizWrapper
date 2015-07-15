@@ -177,6 +177,30 @@ type GraphColor =
       | SingleColor c -> c |> colorToString
       | ColorList cl -> cl.ToString()
 
+type Dimension(n : int) =
+   do
+      if n < 2 || n > 10 then
+         raise (ArgumentOutOfRangeException("Dimension value must be between 2 and 10 inclusive"))
+   member __.N = n
+
+type DirEdgeConstraints =
+| False
+| True
+| Hier
+   override this.ToString() =
+      (getUnionCaseName this).ToLowerInvariant()
+
+type Separation(h : double, w : double, additive : bool) =
+   new (p : double, additive) =
+      Separation(p, p, additive)
+   member __.H = h
+   member __.W = w
+   member __.Additive = additive
+   override __.ToString() =
+      sprintf "%s%s"
+         (if additive then "+" else "")
+         (if h = w then sprintf "%g" h else sprintf "%g,%g" h w)
+
 type Graph
    (
       id : Id, 
@@ -202,6 +226,13 @@ type Graph
    let defaultComment = ""
    let defaultCompound = false
    let defaultConcentrate = false
+   let defaultDefaultDistance : float option = None
+   let defaultDim = Dimension(2)
+   let defaultDimen = Dimension(2)
+   let defaultDirEdgeConstraints = DirEdgeConstraints.False
+   let defaultDpi = 96
+   let defaultEpsilon : float option = None
+   let defaultESep : Separation option = None
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -225,6 +256,13 @@ type Graph
    member val Comment = defaultComment with get, set
    member val Compound = defaultCompound with get, set
    member val Concentrate = defaultConcentrate with get, set
+   member val DefaultDistance = defaultDefaultDistance with get, set
+   member val Dim = defaultDim with get, set
+   member val Dimen = defaultDimen with get, set
+   member val DirEdgeConstraints = defaultDirEdgeConstraints with get, set
+   member val Dpi = defaultDpi with get, set
+   member val Epsilon = defaultEpsilon with get, set
+   member val ESep = defaultESep with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -260,6 +298,24 @@ type Graph
          dict.["compound"] <- (defaultCompound |> not).ToString().ToLowerInvariant()
       if this.Concentrate <> defaultConcentrate then
          dict.["concentrate"] <- (defaultConcentrate |> not).ToString().ToLowerInvariant()
+      match this.DefaultDistance with
+      | Some d -> 
+         dict.["defaultdist"] <- sprintf "%g" d
+      | None -> ()
+      if this.Dim <> defaultDim then
+         dict.["dim"] <- this.Dim.N.ToString()
+      if this.Dimen <> defaultDimen then
+         dict.["dimen"] <- this.Dimen.N.ToString()
+      if this.DirEdgeConstraints <> defaultDirEdgeConstraints then
+         dict.["diredgeconstraints"] <- this.DirEdgeConstraints.ToString()
+      if this.Dpi <> defaultDpi then
+         dict.["dpi"] <- this.Dpi.ToString()
+      match this.Epsilon with
+      | Some e -> dict.["epsilon"] <- sprintf "%g" e
+      | None -> ()
+      match this.ESep with
+      | Some es -> dict.["esep"] <- es.ToString()
+      | None -> ()
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

@@ -1,10 +1,9 @@
 ﻿module GraphTests
 
-open System.IO
+open System.Drawing
 open NUnit.Framework
 open FsUnit
 open GraphVizWrapper
-open System.Drawing
 
 [<AutoOpen>]
 module __ =
@@ -147,6 +146,61 @@ module __ =
       "graph \"id\"\r\n\
       {\r\n\
       \x20\x20[ concentrate = true ]\
+      }"
+   let emptyGraphWithDefaultDistance = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ defaultdist = 3.142 ]\
+      }"
+   let emptyGraphWithDim = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ dim = 3 ]\
+      }"
+   let emptyGraphWithDimen = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ dimen = 10 ]\
+      }"
+   let emptyGraphWithDirEdgeConstraintsTrue = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ diredgeconstraints = true ]\
+      }"
+   let emptyGraphWithDirEdgeConstraintsHier = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ diredgeconstraints = \"hier\" ]\
+      }"
+   let emptyGraphWithDpi = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ dpi = 300 ]\
+      }"
+   let emptyGraphWithEpsilon = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ epsilon = 1.2 ]\
+      }"
+   let emptyGraphWithESepSimpleNonAdditive = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ esep = 1.2 ]\
+      }"
+   let emptyGraphWithESepPointNonAdditive = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ esep = \"1.2,3.4\" ]\
+      }"
+   let emptyGraphWithESepSimpleAdditive = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ esep = +1.2 ]\
+      }"
+   let emptyGraphWithESepPointAdditive = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ esep = \"+1.2,3.4\" ]\
       }"
 
 [<TestFixture>]
@@ -386,5 +440,86 @@ type GraphTests() =
    member __.``We can set the concentrate attribute to a non default value``() =
       let expected = emptyGraphWithConcentrate
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Concentrate = true)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the defaultdist attribute to a non default value``() =
+      let expected = emptyGraphWithDefaultDistance
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, DefaultDistance = Some 3.142)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the dim attribute to a non default value``() =
+      let expected = emptyGraphWithDim
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Dim = Dimension(3))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the dimen attribute to a non default value``() =
+      let expected = emptyGraphWithDimen
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Dimen = Dimension(10))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the diredgeconstraints attribute to true``() =
+      let expected = emptyGraphWithDirEdgeConstraintsTrue
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, DirEdgeConstraints = DirEdgeConstraints.True)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the diredgeconstraints attribute to 'hier'``() =
+      let expected = emptyGraphWithDirEdgeConstraintsHier
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, DirEdgeConstraints = DirEdgeConstraints.Hier)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the dpi attribute to a non default value``() =
+      let expected = emptyGraphWithDpi
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Dpi = 300)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the epsilon attribute to a non default value``() =
+      let expected = emptyGraphWithEpsilon
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Epsilon = Some 1.2)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the esep attribute to a simple non additive value``() =
+      let expected = emptyGraphWithESepSimpleNonAdditive
+      let esep = Separation(1.2, false)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ESep = Some esep)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the esep attribute to a point non additive value``() =
+      let expected = emptyGraphWithESepPointNonAdditive
+      let esep = Separation(1.2, 3.4, false)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ESep = Some esep)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the esep attribute to a simple additive value``() =
+      let expected = emptyGraphWithESepSimpleAdditive
+      let esep = Separation(1.2, true)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ESep = Some esep)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the esep attribute to a point additive value``() =
+      let expected = emptyGraphWithESepPointAdditive
+      let esep = Separation(1.2, 3.4, true)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ESep = Some esep)
       let actual = sut.ToString()
       actual |> should equal expected

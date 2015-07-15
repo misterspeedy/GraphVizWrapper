@@ -47,6 +47,11 @@ module __ =
       \x20\x20\"node1\" -> \"node2\";\r\n\
       \x20\x20\"node3\" -> \"node4\"\r\n\
       }"
+   let emptyGraphWithDamping = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ Damping = 0.5 ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -117,5 +122,12 @@ type GraphTests() =
          Graph(Id "id", Strictness.NonStrict, GraphKind.Digraph)
             .WithStatement(EdgeStatement(GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Directed))
             .WithStatement(EdgeStatement(GraphNode(Id "node3"), GraphNode(Id "node4"), Directionality.Directed))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the Damping attribute to a non default value``() =
+      let expected = emptyGraphWithDamping
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Damping = 0.5)
       let actual = sut.ToString()
       actual |> should equal expected

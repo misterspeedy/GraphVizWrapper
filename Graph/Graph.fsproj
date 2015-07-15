@@ -50,7 +50,6 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="Graph.fs" />
-    <None Include="Graph.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

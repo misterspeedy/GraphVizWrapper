@@ -5,12 +5,37 @@ namespace GraphVizWrapper
 
 open System
 open Microsoft.FSharp.Reflection
+open System.Collections.Generic
 
 [<AutoOpen>]
 module __ =
    let getUnionCaseName (x:'a) = 
       match FSharpValue.GetUnionFields(x, typeof<'a>) with
       | case, _ -> case.Name  
+   let isNumber s =
+      match Double.TryParse(s) with
+      | true, _ -> true
+      | _ -> false
+   let quote s =
+      sprintf "\"%s\"" s
+   let dictToAttrList (dict : Dictionary<string, string>) =
+      let pairs = 
+         if dict.Count > 0 then
+            dict
+            |> Seq.map (fun kvp -> 
+               let valueStr =
+                  if kvp.Value |> isNumber then
+                     kvp.Value
+                  else
+                     kvp.Value |> quote
+               sprintf "%s = %s" kvp.Key valueStr)
+            |> Array.ofSeq
+         else
+            [||]
+      if pairs.Length > 0 then
+         sprintf "  [ %s ]" (String.Join("; ", pairs))
+      else
+         ""
 
 type Strictness =
 | Strict
@@ -37,7 +62,7 @@ type GraphNode(id : Id) =
    override this.ToString() =
       this.Id.ToString()
 
-// TODO Should it be possible to add directed edges to graphs
+// TODO Should it really be possible to add directed edges to graphs
 // and undirected edges to digraphs?
 type Directionality =
 | Directed
@@ -101,31 +126,39 @@ type Graph
       id : Id, 
       strictness: Strictness, 
       kind : GraphKind, 
-      statements : Statements,
-      graphAttributes : Attributes,
-      nodeAttributes : Attributes,
-      edgeAttributes : Attributes
+      statements : Statements
+//      graphAttributes : Attributes,
+//      nodeAttributes : Attributes,
+//      edgeAttributes : Attributes
    ) =
+   let defaultDamping = 0.99
    new (id : Id, strictness: Strictness, kind : GraphKind) =
-      Graph(id, strictness, kind, Statements([]), 
-         Attributes(AttributeStatementType.Graph, []),
-         Attributes(AttributeStatementType.Node, []),
-         Attributes(AttributeStatementType.Edge, []))
+      Graph(id, strictness, kind, Statements([])) 
+//         Attributes(AttributeStatementType.Graph, []),
+//         Attributes(AttributeStatementType.Node, []),
+//         Attributes(AttributeStatementType.Edge, []))
    member __.Id = id
    member __.Strictness = strictness
    member __.Kind = kind
    member __.Statements = statements
-   member __.GraphAttributes = graphAttributes
-   member __.NodeAttributes = nodeAttributes
-   member __.EdgeAttributes = edgeAttributes
+   member val Damping = defaultDamping with get, set
+   member private this.GraphAttributes =
+      let dict = Dictionary<string, string>()
+      if this.Damping <> defaultDamping then
+         dict.["Damping"] <- this.Damping.ToString()
+      dict |> dictToAttrList
+//   member __.GraphAttributes = graphAttributes
+//   member __.NodeAttributes = nodeAttributes
+//   member __.EdgeAttributes = edgeAttributes
    member this.WithStatement(statement : Statement) =
-      Graph(this.Id, this.Strictness, this.Kind, this.Statements.WithStatement statement, this.GraphAttributes, this.NodeAttributes, this.EdgeAttributes)
-   member this.WithGraphAttribute(attribute : Attribute) =
-      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes.WithAttribute attribute, this.NodeAttributes, this.EdgeAttributes)
-   member this.WithNodeAttribute(attribute : Attribute) =
-      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes, this.NodeAttributes.WithAttribute attribute, this.EdgeAttributes)
-   member this.WithEdgeAttribute(attribute : Attribute) =
-      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes, this.NodeAttributes, this.EdgeAttributes.WithAttribute attribute)
+      Graph(this.Id, this.Strictness, this.Kind, this.Statements.WithStatement statement)
+      //, this.GraphAttributes, this.NodeAttributes, this.EdgeAttributes)
+//   member this.WithGraphAttribute(attribute : Attribute) =
+//      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes.WithAttribute attribute, this.NodeAttributes, this.EdgeAttributes)
+//   member this.WithNodeAttribute(attribute : Attribute) =
+//      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes, this.NodeAttributes.WithAttribute attribute, this.EdgeAttributes)
+//   member this.WithEdgeAttribute(attribute : Attribute) =
+//      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes, this.NodeAttributes, this.EdgeAttributes.WithAttribute attribute)
    override this.ToString() =
       (
          sprintf "\
@@ -133,15 +166,13 @@ type Graph
             {\r\n\
                %O\
                %O\
-               %O\
-               %O\
-            }\r\n\
+            }\
          " 
             this.Strictness
             this.Kind
             this.Id
             this.GraphAttributes
-            this.NodeAttributes
-            this.EdgeAttributes
+//            this.NodeAttributes
+//            this.EdgeAttributes
             this.Statements
       ).Trim()

@@ -9,6 +9,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GraphVizWrapperTests", "Gra
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Graph", "Graph\Graph.fsproj", "{61B08167-C76A-4C9E-B4EB-0ED06ECAB744}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GraphTests", "GraphTests\GraphTests.fsproj", "{164B528C-6573-4069-B280-2CB9A5F738AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{61B08167-C76A-4C9E-B4EB-0ED06ECAB744}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61B08167-C76A-4C9E-B4EB-0ED06ECAB744}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61B08167-C76A-4C9E-B4EB-0ED06ECAB744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{164B528C-6573-4069-B280-2CB9A5F738AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{164B528C-6573-4069-B280-2CB9A5F738AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{164B528C-6573-4069-B280-2CB9A5F738AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{164B528C-6573-4069-B280-2CB9A5F738AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

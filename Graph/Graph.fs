@@ -3,17 +3,14 @@
 namespace GraphVizWrapper
 #endif
 
-open System.Text
+open System
 open Microsoft.FSharp.Reflection
 
-// TODO move
 [<AutoOpen>]
-module Utils =
+module __ =
    let getUnionCaseName (x:'a) = 
       match FSharpValue.GetUnionFields(x, typeof<'a>) with
       | case, _ -> case.Name  
-   let quote s =
-      sprintf "\"%s\"" s
 
 type Strictness =
 | Strict
@@ -35,12 +32,14 @@ type Id =
       match this with
       | Id s -> s
 
-type Node(id : Id) =
+type GraphNode(id : Id) =
    member __.Id = id
    override this.ToString() =
       this.Id.ToString()
 
-type EdgeType =
+// TODO Should it be possible to add directed edges to graphs
+// and undirected edges to digraphs?
+type Directionality =
 | Directed
 | Undirected
    override this.ToString() =
@@ -49,57 +48,100 @@ type EdgeType =
       | Undirected -> "--"
 
 type Statement =
-| NodeStatement of Node
-| EdgeStatement of Node * Node * EdgeType
+| NodeStatement of GraphNode
+| EdgeStatement of GraphNode * GraphNode * Directionality
    override this.ToString() =
       match this with
       | NodeStatement n -> 
-         sprintf "%O;" n.Id
-      | EdgeStatement(n1, n2, et) ->
-         sprintf "%O %O %O;" n1 et n2
+         sprintf "\"%O\"" n.Id
+      | EdgeStatement(n1, n2, d) ->
+         sprintf "\"%O\" %O \"%O\"" n1 d n2
+
+type Statements(statements : Statement list) =
+   member __.Statements = statements
+   member this.WithStatement(statement : Statement) =
+      Statements(statement::this.Statements |> List.rev)
+   override __.ToString() =
+      if statements.IsEmpty then 
+         ""
+      else
+         sprintf "%s\r\n" 
+            (String.Join (";\r\n", 
+               [| for statement in statements -> 
+                     sprintf "  %O" statement |]))
 
 type AttributeStatementType =
 | Graph
 | Node
 | Edge
+   override this.ToString() =
+      (getUnionCaseName this).ToLowerInvariant()
 
 type Attribute (key : Id, value : Id) =
    member __.Key = key
    member __.Value = value
    override this.ToString() =
-      sprintf "%s = %s" (this.Key.ToString() |> quote) (this.Key.ToString() |> quote)
+      sprintf "\"%O\" = \"%O\"" this.Key this.Value
 
-type AttributeStatement(attributeStatementType : AttributeStatementType, attributes : Attribute list) =
+type Attributes(statementType : AttributeStatementType, attributes : Attribute list) =
+   member __.StatementType = statementType
    member __.Attributes = attributes
-   override __.ToString() =
-      seq {
-         yield "[ "
-         for attribute in attributes do
-            yield attribute.ToString()
-            yield "; "
-         yield "]"
-      } |> Seq.reduce (+)
+   member this.WithAttribute(attribute : Attribute) =
+      Attributes(this.StatementType, attribute::this.Attributes)
+   override this.ToString() =
+      if attributes.IsEmpty then 
+         ""
+      else
+         sprintf "  %O [ %s ]\r\n"
+            this.StatementType
+            (String.Join (";", [| for attribute in attributes -> attribute.ToString() |]))
 
-type Graph(id : Id, strictness: Strictness, kind : GraphKind, statements : Statement list) =
+type Graph
+   (
+      id : Id, 
+      strictness: Strictness, 
+      kind : GraphKind, 
+      statements : Statements,
+      graphAttributes : Attributes,
+      nodeAttributes : Attributes,
+      edgeAttributes : Attributes
+   ) =
    new (id : Id, strictness: Strictness, kind : GraphKind) =
-      Graph(id, strictness, kind, [])
+      Graph(id, strictness, kind, Statements([]), 
+         Attributes(AttributeStatementType.Graph, []),
+         Attributes(AttributeStatementType.Node, []),
+         Attributes(AttributeStatementType.Edge, []))
    member __.Id = id
    member __.Strictness = strictness
    member __.Kind = kind
    member __.Statements = statements
+   member __.GraphAttributes = graphAttributes
+   member __.NodeAttributes = nodeAttributes
+   member __.EdgeAttributes = edgeAttributes
    member this.WithStatement(statement : Statement) =
-      Graph(this.Id, this.Strictness, this.Kind, statement::this.Statements)
+      Graph(this.Id, this.Strictness, this.Kind, this.Statements.WithStatement statement, this.GraphAttributes, this.NodeAttributes, this.EdgeAttributes)
+   member this.WithGraphAttribute(attribute : Attribute) =
+      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes.WithAttribute attribute, this.NodeAttributes, this.EdgeAttributes)
+   member this.WithNodeAttribute(attribute : Attribute) =
+      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes, this.NodeAttributes.WithAttribute attribute, this.EdgeAttributes)
+   member this.WithEdgeAttribute(attribute : Attribute) =
+      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes, this.NodeAttributes, this.EdgeAttributes.WithAttribute attribute)
    override this.ToString() =
-      let sb = StringBuilder()
-      let (~~) (text:string) = sb.Append text |> ignore
-      let (~~~) (text:string) = ~~text; ~~" "
-      let (~~~~) (text:string) = sb.AppendLine text |> ignore
-      if this.Strictness = Strict then
-         ~~~ this.Strictness.ToString()
-      ~~~ this.Kind.ToString()
-      ~~~ (this.Id.ToString() |> quote)
-      ~~~~ "{"
-      for statement in statements do
-         ~~~~ statement.ToString()
-      ~~~~ "}"
-      sb.ToString()
+      (
+         sprintf "\
+            %O %O \"%O\"\r\n\
+            {\r\n\
+               %O\
+               %O\
+               %O\
+               %O\
+            }\r\n\
+         " 
+            this.Strictness
+            this.Kind
+            this.Id
+            this.GraphAttributes
+            this.NodeAttributes
+            this.EdgeAttributes
+            this.Statements
+      ).Trim()

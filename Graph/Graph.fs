@@ -154,10 +154,11 @@ type WeightedColorList() =
    let mutable list : WeightedColor list = []
    let totalWeight items =
       items |> List.sumBy (fun wc -> match wc.Weight with | Some w -> w | _ -> 0.)
-   member __.Add(weightedColor : WeightedColor) =
+   member this.Add(weightedColor : WeightedColor) =
       let newList = weightedColor :: list
       if newList |> totalWeight <= 1.0 then
          list <- newList
+         this
       else
          raise (ArgumentException("Color weights cannot add up to more than 1.0"))
    override __.ToString() =
@@ -197,6 +198,10 @@ type Graph
    let defaultCharSet = "UTF-8"
    let defaultClusterRank = "local"
    let defaultColor : GraphColor = GraphColor.SingleColor(Color.Black)
+   let defaultColorScheme = ""
+   let defaultComment = ""
+   let defaultCompound = false
+   let defaultConcentrate = false
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -216,6 +221,10 @@ type Graph
    member val Charset = defaultCharSet with get, set
    member val ClusterRank = defaultClusterRank with get, set
    member val Color = defaultColor with get, set
+   member val ColorScheme = defaultColorScheme with get, set
+   member val Comment = defaultComment with get, set
+   member val Compound = defaultCompound with get, set
+   member val Concentrate = defaultConcentrate with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -235,14 +244,22 @@ type Graph
       | Some c -> 
          dict.["bgcolor"] <- c.ToString()
       | _ -> ()
-      if this.Center then
-         dict.["center"] <- "true"
+      if this.Center <> defaultCenter then
+         dict.["center"] <- (defaultCenter |> not).ToString().ToLowerInvariant()
       if this.Charset <> defaultCharSet then
          dict.["charset"] <- this.Charset
       if this.ClusterRank <> defaultClusterRank then
          dict.["clusterrank"] <- this.ClusterRank
       if this.Color <> defaultColor then
          dict.["color"] <- this.Color.ToString()
+      if this.ColorScheme <> defaultColorScheme then
+         dict.["colorscheme"] <- this.ColorScheme
+      if this.Comment <> defaultComment then
+         dict.["comment"] <- this.Comment
+      if this.Compound <> defaultCompound then
+         dict.["compound"] <- (defaultCompound |> not).ToString().ToLowerInvariant()
+      if this.Concentrate <> defaultConcentrate then
+         dict.["concentrate"] <- (defaultConcentrate |> not).ToString().ToLowerInvariant()
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

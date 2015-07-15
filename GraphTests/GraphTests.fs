@@ -88,6 +88,16 @@ module __ =
       {\r\n\
       \x20\x20[ bgcolor = \"#01020304\" ]\
       }"
+   let emptyGraphWithBgColorList = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ bgcolor = \"PeachPuff;0.4:#01020304;0.6\" ]\
+      }"
+   let emptyGraphWithBgColorListNoWeighting = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ bgcolor = \"PeachPuff:#01020304\" ]\
+      }"
    let emptyGraphWithCenter = 
       "graph \"id\"\r\n\
       {\r\n\
@@ -112,6 +122,31 @@ module __ =
       "graph \"id\"\r\n\
       {\r\n\
       \x20\x20[ color = \"#01020304\" ]\
+      }"
+   let emptyGraphWithColorList = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ color = \"PeachPuff;0.4:#01020304;0.6\" ]\
+      }"
+   let emptyGraphWithColorScheme = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ colorscheme = \"color scheme\" ]\
+      }"
+   let emptyGraphWithComment = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ comment = \"this is a comment\" ]\
+      }"
+   let emptyGraphWithCompound = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ compound = true ]\
+      }"
+   let emptyGraphWithConcentrate = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ concentrate = true ]\
       }"
 
 [<TestFixture>]
@@ -252,6 +287,32 @@ type GraphTests() =
       actual |> should equal expected
 
    [<Test>]
+   member __.``We can set the bgcolor attribute to a color list value``() =
+      let expected = emptyGraphWithBgColorList
+      let color1 = { WColor = Color.PeachPuff; Weight = Some 0.4 }
+      let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = Some 0.6 }
+      let colors = 
+         WeightedColorList()
+            .Add(color1)
+            .Add(color2)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, BgColor = Some(GraphColor.ColorList(colors)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the bgcolor attribute to a color list value without weightings``() =
+      let expected = emptyGraphWithBgColorListNoWeighting
+      let color1 = { WColor = Color.PeachPuff; Weight = None }
+      let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = None }
+      let colors = 
+         WeightedColorList()
+            .Add(color1)
+            .Add(color2)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, BgColor = Some(GraphColor.ColorList(colors)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
    member __.``We can set the center attribute to a non default value``() =
       let expected = emptyGraphWithCenter
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Center = true)
@@ -287,3 +348,43 @@ type GraphTests() =
       let actual = sut.ToString()
       actual |> should equal expected
 
+   [<Test>]
+   member __.``We can set the color attribute to a color list value``() =
+      let expected = emptyGraphWithColorList
+      let color1 = { WColor = Color.PeachPuff; Weight = Some 0.4 }
+      let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = Some 0.6 }
+      let colors = 
+         WeightedColorList()
+            .Add(color1)
+            .Add(color2)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Color = GraphColor.ColorList(colors))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the colorscheme attribute to a non default value``() =
+      let expected = emptyGraphWithColorScheme
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ColorScheme = "color scheme")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the comment attribute to a non default value``() =
+      let expected = emptyGraphWithComment
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Comment = "this is a comment")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the compound attribute to a non default value``() =
+      let expected = emptyGraphWithCompound
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Compound = true)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the concentrate attribute to a non default value``() =
+      let expected = emptyGraphWithConcentrate
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Concentrate = true)
+      let actual = sut.ToString()
+      actual |> should equal expected

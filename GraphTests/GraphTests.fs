@@ -282,6 +282,66 @@ module __ =
       {\r\n\
       \x20\x20[ labeljust = \"l\" ]\
       }"
+   let emptyGraphWithLabelLocTop = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ labelloc = \"t\" ]\
+      }"
+   let emptyGraphWithLabelLocCenter = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ labelloc = \"c\" ]\
+      }"
+   let emptyGraphWithLabelLocBottom = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ labelloc = \"b\" ]\
+      }"
+   // Landscape = true is a synonym for rotation = 90
+   let emptyGraphWithLandscape = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ rotation = 90 ]\
+      }"
+   let emptyGraphWithLayerListSep = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ layerlistsep = \";\" ]\
+      }"
+   let emptyGraphWithLayerSep = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ layersep = \"|\" ]\
+      }"
+   let emptyGraphWithLayersUsingDefaultSep = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ layers = \"layer1:layer2\" ]\
+      }"
+   let emptyGraphWithLayersUsingNonDefaultSep = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ layers = \"layer1|layer2\"; layersep = \"|\" ]\
+      }"
+   let emptyGraphWithLayerSelectSome = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ layers = \"layer1:layer2:layer3\";\
+      layerselect = \"1,3\" ]\
+      }"
+   // Selecting all layers means we don't need to send a layerselect value:
+   let emptyGraphWithLayerSelectAll = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ layers = \"layer1:layer2\";\
+      }"
+   let emptyGraphWithLayerSelectSomeNonDefaultLayerListSep = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ layerlistsep = \"|\"\
+      layers = \"layer1:layer2:layer3\";\
+      layerselect = \"1|3\" ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -723,3 +783,82 @@ type GraphTests() =
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LabelJust = LabelJust.Left)
       let actual = sut.ToString()
       actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the labelloc attribute to a value of 'top'``() =
+      let expected = emptyGraphWithLabelLocTop
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LabelLoc = Some LabelLoc.Top)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the labelloc attribute to a value of 'center'``() =
+      let expected = emptyGraphWithLabelLocCenter
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LabelLoc = Some LabelLoc.Center)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the labelloc attribute to a value of 'bottom'``() =
+      let expected = emptyGraphWithLabelLocBottom
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LabelLoc = Some LabelLoc.Bottom)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the landscape attribute to true causing a rotation of 90``() =
+      let expected = emptyGraphWithLandscape
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Landscape = true)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the layerlistsep attribute to a non default value``() =
+      let expected = emptyGraphWithLayerListSep
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LayerListSep = ";")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the layers attribute to a non default value (and default layersep)``() =
+      let expected = emptyGraphWithLayersUsingDefaultSep
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            Layers = Layers([|Layer("layer1", true); Layer("layer2", false)|]))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the layers attribute to a non default value (and non default layersep)``() =
+      let expected = emptyGraphWithLayersUsingNonDefaultSep
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            LayerSep = "|", Layers = Layers([|Layer("layer1", true); Layer("layer2", false)|]))
+      let actual = sut.ToString()
+      actual |> should equal expected
+      
+   [<Test>]
+   member __.``We can set the layersep attribute to a non default value``() =
+      let expected = emptyGraphWithLayerSep
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LayerSep = "|")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the layerselect attribute to a non default value``() =
+      let expected = emptyGraphWithLayerSelectSome
+      let layers =
+         Layers(
+            [|
+               Layer("layer1", true)
+               Layer("layer2", false)
+               Layer("layer3", true)
+            |]
+         )
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Layers = layers)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+//   let emptyGraphWithLayerSelectSome = 
+//   let emptyGraphWithLayerSelectAll = 
+//   let emptyGraphWithLayerSelectSomeNonDefaultLayerListSep = 

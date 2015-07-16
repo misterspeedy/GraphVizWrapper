@@ -13,8 +13,9 @@ module __ =
    let getUnionCaseName (x:'a) = 
       match FSharpValue.GetUnionFields(x, typeof<'a>) with
       | case, _ -> case.Name  
-   let isNumber s =
-      match Double.TryParse(s) with
+   let isNumber (s : string) =
+      // Commas are allowed by Double.TryParse, so sabotage that:
+      match Double.TryParse(s.Replace(',', 'x')) with
       | true, _ -> true
       | _ -> false
    let isBool s =
@@ -244,9 +245,41 @@ type LabelJust =
 | Left
    override this.ToString() =
       match this with
-      | Center -> ""
+      | Center -> "c"
       | Right -> "r"
       | Left -> "l"
+
+type LabelLoc =
+| Top
+| Center
+| Bottom
+   override this.ToString() =
+      match this with
+      | Top -> "t"
+      | Center -> "c"
+      | Bottom -> "b"
+
+type Layer(name : string, selected : bool) =
+   member val Name = name with get
+   member val Selected = selected with get
+
+type Layers(layers : Layer[]) =
+   member __.Layers = layers
+   member __.ToString(sep) =
+      let names = layers |> Array.map (fun layer -> layer.Name)
+      String.Join(sep, names)
+   member this.AllSelected =
+      this.Layers 
+      |> Array.exists (fun l -> l.Selected |> not) 
+      |> not
+   member this.LayerSelect(sep) =
+      let layerIndices =
+         this.Layers
+         |> Array.mapi (fun i l -> i+1, l)
+         |> Array.filter (fun (_, l) -> l.Selected)
+         |> Array.map fst
+         |> Array.map (fun n -> n.ToString())
+      String.Join(sep, layerIndices)
 
 type Graph
    (
@@ -293,6 +326,11 @@ type Graph
    let defaultLabel = ""
    let defaultLabelScheme = LabelScheme.NoScheme
    let defaultLabelJust = LabelJust.Center
+   let defaultLabelLoc : LabelLoc option = None
+   let defaultRotation = 0
+   let defaultLayerListSep = ","
+   let defaultLayers = Layers([||])
+   let defaultLayerSep = ":"
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -342,6 +380,16 @@ type Graph
    member val Label = defaultLabel with get, set
    member val LabelScheme = defaultLabelScheme with get, set
    member val LabelJust = defaultLabelJust with get, set
+   member val LabelLoc = defaultLabelLoc with get, set
+   member this.Landscape
+      with get() = this.Rotation = 90
+      and set(value) = 
+         if value then this.Rotation <- 90
+         else if this.Rotation = 90 then this.Rotation <- 0
+   member val Rotation = defaultRotation with get, set
+   member val LayerListSep = defaultLayerListSep with get, set
+   member val Layers = defaultLayers with get, set
+   member val LayerSep = defaultLayerSep with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -421,6 +469,19 @@ type Graph
          dict.["labelscheme"] <- this.LabelScheme.ToString()
       if this.LabelJust <> defaultLabelJust then
          dict.["labeljust"] <- this.LabelJust.ToString()
+      match this.LabelLoc with
+      | Some loc -> dict.["labelloc"] <- loc.ToString()
+      | None -> ()
+      if this.Rotation <> defaultRotation then
+         dict.["rotation"] <- this.Rotation.ToString()
+      if this.LayerListSep <> defaultLayerListSep then
+         dict.["layerlistsep"] <- this.LayerListSep
+      if this.Layers <> defaultLayers then
+         dict.["layers"] <- this.Layers.ToString(this.LayerSep)
+      if this.LayerSep <> defaultLayerSep then
+         dict.["layersep"] <- this.LayerSep
+      if this.Layers.AllSelected |> not then
+         dict.["layerselect"] <- this.Layers.LayerSelect(this.LayerListSep)
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

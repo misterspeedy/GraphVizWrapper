@@ -201,6 +201,53 @@ type Separation(h : double, w : double, additive : bool) =
          (if additive then "+" else "")
          (if h = w then sprintf "%g" h else sprintf "%g,%g" h w)
 
+type FontNames =
+| Undefined
+| Svg
+| Ps
+| Gd
+   override this.ToString() =
+      (getUnionCaseName this).ToLowerInvariant()
+
+type FontSize(points : double) =
+   do
+      if points < 1.0 then
+         raise (ArgumentOutOfRangeException("Font size must be at least 1.0"))
+   member __.Points = points
+   override __.ToString() =
+      sprintf "%g" points
+
+type ImagePath(elements : string[]) =
+   let onWindows =
+      // Ugh! Really?
+      Environment.OSVersion.Platform.ToString().StartsWith("Win")
+   member __.Elements = elements
+   override this.ToString() =
+      let sep = if onWindows then ";" else ":"
+      String.Join(sep, this.Elements)
+
+type LabelScheme =
+| NoScheme
+| PenaltyCenter
+| PenaltyCenterOld
+| TwoStep
+   override this.ToString() =
+      match this with
+      | NoScheme -> "0"
+      | PenaltyCenter -> "1"
+      | PenaltyCenterOld -> "2"
+      | TwoStep -> "3"
+
+type LabelJust =
+| Center
+| Right
+| Left
+   override this.ToString() =
+      match this with
+      | Center -> ""
+      | Right -> "r"
+      | Left -> "l"
+
 type Graph
    (
       id : Id, 
@@ -233,6 +280,19 @@ type Graph
    let defaultDpi = 96
    let defaultEpsilon : float option = None
    let defaultESep : Separation option = None
+   let defaultFontColor = Color.Black
+   let defaultFontName = "Times-Roman"
+   let defaultFontNames = FontNames.Undefined
+   let defaultFontPath = ""
+   let defaultFontSize = FontSize(14.0)
+   let defaultForceLabels = true
+   let defaultGradientAngle = 0
+   let defaultIdAttribute = ""
+   let defaultImagePath = ImagePath([||])
+   let defaultInputScale = 72.0
+   let defaultLabel = ""
+   let defaultLabelScheme = LabelScheme.NoScheme
+   let defaultLabelJust = LabelJust.Center
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -263,6 +323,25 @@ type Graph
    member val Dpi = defaultDpi with get, set
    member val Epsilon = defaultEpsilon with get, set
    member val ESep = defaultESep with get, set
+   member val FontColor = defaultFontColor with get, set
+   member val FontName = defaultFontName with get, set
+   member val FontNames = defaultFontNames with get, set
+   member val FontPath = defaultFontPath with get, set
+   member val FontSize = defaultFontSize with get, set
+   member val ForceLabels = defaultForceLabels with get, set
+   member val GradientAngle = defaultGradientAngle with get, set
+   // Href is a synonym for url:
+   member this.Href 
+      with get() = this.Url
+      and set(value) = this.Url <- value
+   /// Rendered as 'id' in the attribute string but called 'IdAttribute' here
+   /// to avoid a naming clash with the Graph Id.
+   member val IdAttribute = defaultIdAttribute with get, set
+   member val ImagePath = defaultImagePath with get, set
+   member val InputScale = defaultInputScale with get, set
+   member val Label = defaultLabel with get, set
+   member val LabelScheme = defaultLabelScheme with get, set
+   member val LabelJust = defaultLabelJust with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -316,6 +395,32 @@ type Graph
       match this.ESep with
       | Some es -> dict.["esep"] <- es.ToString()
       | None -> ()
+      if this.FontColor <> defaultFontColor then
+         dict.["fontcolor"] <- this.FontColor |> colorToString
+      if this.FontName <> defaultFontName then
+         dict.["fontname"] <- this.FontName
+      if this.FontNames <> defaultFontNames then
+         dict.["fontnames"] <- this.FontNames.ToString()
+      if this.FontPath <> defaultFontPath then
+         dict.["fontpath"] <- this.FontPath
+      if this.FontSize <> defaultFontSize then
+         dict.["fontsize"] <- this.FontSize.ToString()
+      if this.ForceLabels <> defaultForceLabels then
+         dict.["forcelabels"] <- (defaultForceLabels |> not).ToString().ToLowerInvariant()
+      if this.GradientAngle <> defaultGradientAngle then
+         dict.["gradientangle"] <- this.GradientAngle.ToString()
+      if this.IdAttribute <> defaultIdAttribute then
+         dict.["id"] <- this.IdAttribute
+      if this.ImagePath <> defaultImagePath then
+         dict.["imagepath"] <- this.ImagePath.ToString()
+      if this.InputScale <> defaultInputScale then
+         dict.["inputscale"] <- sprintf "%g" this.InputScale
+      if this.Label <> defaultLabel then
+         dict.["label"] <- this.Label
+      if this.LabelScheme <> defaultLabelScheme then
+         dict.["labelscheme"] <- this.LabelScheme.ToString()
+      if this.LabelJust <> defaultLabelJust then
+         dict.["labeljust"] <- this.LabelJust.ToString()
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

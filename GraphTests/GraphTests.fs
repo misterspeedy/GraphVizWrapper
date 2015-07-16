@@ -202,6 +202,86 @@ module __ =
       {\r\n\
       \x20\x20[ esep = \"+1.2,3.4\" ]\
       }"
+   let emptyGraphWithFontColor = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ fontcolor = \"PeachPuff\" ]\
+      }"
+   let emptyGraphWithFontName = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ fontname = \"Helvetica\" ]\
+      }"
+   let emptyGraphWithFontNames = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ fontnames = \"svg\" ]\
+      }"
+   let emptyGraphWithFontPath = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ fontpath = \"c:\\fonts\" ]\
+      }"
+   let emptyGraphWithFontSize = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ fontsize = 11.5 ]\
+      }"
+   let emptyGraphWithForceLabels = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ forcelabels = false ]\
+      }"
+   let emptyGraphWithGradientAngle = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ gradientangle = 180 ]\
+      }"
+   let emptyGraphWithId = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ id = \"id attribute\" ]\
+      }"
+   let emptyGraphWithImagePath = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ imagepath = \"element1;element2\" ]\
+      }"
+   let emptyGraphWithInputScale = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ inputscale = 36 ]\
+      }"
+   let emptyGraphWithLabel = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ label = \"graph label\" ]\
+      }"
+   let emptyGraphWithLabelSchemePenaltyCenter = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ labelscheme = 1 ]\
+      }"
+   let emptyGraphWithLabelSchemePenaltyOldCenter = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ labelscheme = 2 ]\
+      }"
+   let emptyGraphWithLabelSchemeTwoStep = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ labelscheme = 3 ]\
+      }"
+   let emptyGraphWithLabelJustRight = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ labeljust = \"r\" ]\
+      }"
+   let emptyGraphWithLabelJustLeft = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ labeljust = \"l\" ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -521,5 +601,125 @@ type GraphTests() =
       let expected = emptyGraphWithESepPointAdditive
       let esep = Separation(1.2, 3.4, true)
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ESep = Some esep)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the fontcolor attribute to a non default value``() =
+      let expected = emptyGraphWithFontColor
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, FontColor = Color.PeachPuff)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the fontname attribute to a non default value``() =
+      let expected = emptyGraphWithFontName
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, FontName = "Helvetica")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the fontnames attribute to a non default value``() =
+      let expected = emptyGraphWithFontNames
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, FontNames = FontNames.Svg)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the fontpath attribute to a non default value``() =
+      let expected = emptyGraphWithFontPath
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, FontPath = @"c:\fonts")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the fontsize attribute to a non default value``() =
+      let expected = emptyGraphWithFontSize
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, FontSize = FontSize(11.5))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the forcelabels attribute to a non default value``() =
+      let expected = emptyGraphWithForceLabels
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ForceLabels = false)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the gradientangle attribute to a non default value``() =
+      let expected = emptyGraphWithGradientAngle
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, GradientAngle = 180)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the href attribute to a non default value``() =
+      let expected = emptyGraphWithUrl
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Href = "www.kiteason.com")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the id attribute to a non default value``() =
+      let expected = emptyGraphWithId
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, IdAttribute = "id attribute")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the imagepath attribute to a non default value``() =
+      let expected = emptyGraphWithImagePath
+      let imagePath = ImagePath([|"element1"; "element2"|])
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ImagePath = imagePath)
+      let actual = sut.ToString()
+      actual |> should equal expected
+   
+   [<Test>]
+   member __.``We can set the inputscale attribute to a non default value``() =
+      let expected = emptyGraphWithInputScale
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, InputScale = 36.)
+      let actual = sut.ToString()
+      actual |> should equal expected
+   
+   [<Test>]
+   member __.``We can set the label attribute to a non default value``() =
+      let expected = emptyGraphWithLabel
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Label = "graph label")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the labelscheme attribute to a value of 'penalty center' (1)``() =
+      let expected = emptyGraphWithLabelSchemePenaltyCenter
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LabelScheme = LabelScheme.PenaltyCenter)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the labelscheme attribute to a value of 'penalty old center' (2)``() =
+      let expected = emptyGraphWithLabelSchemePenaltyOldCenter
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LabelScheme = LabelScheme.PenaltyCenterOld)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the labelscheme attribute to a value of 'two step' (3)``() =
+      let expected = emptyGraphWithLabelSchemeTwoStep
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LabelScheme = LabelScheme.TwoStep)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the labeljust attribute to a value of 'right'``() =
+      let expected = emptyGraphWithLabelJustRight
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LabelJust = LabelJust.Right)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the labeljust attribute to a value of 'left'``() =
+      let expected = emptyGraphWithLabelJustLeft
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LabelJust = LabelJust.Left)
       let actual = sut.ToString()
       actual |> should equal expected

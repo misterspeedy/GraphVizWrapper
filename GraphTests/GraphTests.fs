@@ -326,21 +326,120 @@ module __ =
    let emptyGraphWithLayerSelectSome = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ layers = \"layer1:layer2:layer3\";\
+      \x20\x20[ layers = \"layer1:layer2:layer3\"; \
       layerselect = \"1,3\" ]\
-      }"
-   // Selecting all layers means we don't need to send a layerselect value:
-   let emptyGraphWithLayerSelectAll = 
-      "graph \"id\"\r\n\
-      {\r\n\
-      \x20\x20[ layers = \"layer1:layer2\";\
       }"
    let emptyGraphWithLayerSelectSomeNonDefaultLayerListSep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ layerlistsep = \"|\"\
-      layers = \"layer1:layer2:layer3\";\
+      \x20\x20[ layerlistsep = \"|\"; \
+      layers = \"layer1:layer2:layer3\"; \
       layerselect = \"1|3\" ]\
+      }"
+   let emptyGraphWithLayout = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ layout = \"neato\" ]\
+      }"
+   let emptyGraphWithLevels = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ levels = 99 ]\
+      }"
+   let emptyGraphWithLevelsGap = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ levelsgap = 0.1 ]\
+      }"
+   let emptyGraphWithLHeight = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ lheight = 1.2 ]\
+      }"
+   let emptyGraphWithLp = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ lp = \"1.2,3.4\" ]\
+      }"
+   let emptyGraphWithLWidth = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ lwidth = 5.6 ]\
+      }"
+   let emptyGraphWithSingleMargin = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ margin = 7.8 ]\
+      }"
+   let emptyGraphWithXYMargin = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ margin = \"7.8,9.1\" ]\
+      }"
+   let emptyGraphWithMaxIter = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ maxiter = 999 ]\
+      }"
+   let emptyGraphWithMcLimit = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ mclimit = 1.5 ]\
+      }"
+   let emptyGraphWithMinDist = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ mindist = 0.4 ]\
+      }"
+   // Major is the default
+   let emptyGraphWithModeMajor = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      }"
+   let emptyGraphWithModeKK = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ mode = \"KK\" ]\
+      }"
+   let emptyGraphWithModeHier = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ mode = \"hier\" ]\
+      }"
+   let emptyGraphWithModeIpSep = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ mode = \"ipsep\" ]\
+      }"
+   let emptyGraphWithModeSpring = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ mode = \"spring\" ]\
+      }"
+   let emptyGraphWithModeMaxEnt = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ mode = \"maxent\" ]\
+      }"
+   // Shortpath is the default
+   let emptyGraphWithModelShortPath = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      }"
+   let emptyGraphWithModelCircuit = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ model = \"circuit\" ]\
+      }"
+   let emptyGraphWithModelSubset = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ model = \"subset\" ]\
+      }"
+   let emptyGraphWithModelMds = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ model = \"mds\" ]\
       }"
 
 [<TestFixture>]
@@ -824,7 +923,7 @@ type GraphTests() =
       let expected = emptyGraphWithLayersUsingDefaultSep
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
-            Layers = Layers([|Layer("layer1", true); Layer("layer2", false)|]))
+            Layers = Layers([|Layer("layer1", true); Layer("layer2", true)|]))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -833,7 +932,7 @@ type GraphTests() =
       let expected = emptyGraphWithLayersUsingNonDefaultSep
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
-            LayerSep = "|", Layers = Layers([|Layer("layer1", true); Layer("layer2", false)|]))
+            LayerSep = "|", Layers = Layers([|Layer("layer1", true); Layer("layer2", true)|]))
       let actual = sut.ToString()
       actual |> should equal expected
       
@@ -859,6 +958,166 @@ type GraphTests() =
       let actual = sut.ToString()
       actual |> should equal expected
 
-//   let emptyGraphWithLayerSelectSome = 
-//   let emptyGraphWithLayerSelectAll = 
-//   let emptyGraphWithLayerSelectSomeNonDefaultLayerListSep = 
+   [<Test>]
+   member __.``We can set the layerselect attribute to a non default value (with a non default layerlistsep attribute)``() =
+      let expected = emptyGraphWithLayerSelectSomeNonDefaultLayerListSep
+      let layers =
+         Layers(
+            [|
+               Layer("layer1", true)
+               Layer("layer2", false)
+               Layer("layer3", true)
+            |]
+         )
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            Layers = layers, LayerListSep = "|")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the layout attribute to a non default value``() =
+      let expected = emptyGraphWithLayout
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Layout = "neato")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the levels attribute to a non default value``() =
+      let expected = emptyGraphWithLevels
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Levels = 99)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the levelsgap attribute to a non default value``() =
+      let expected = emptyGraphWithLevelsGap
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LevelsGap = 0.1)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the levelheight attribute to a non default value``() =
+      let expected = emptyGraphWithLHeight
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LHeight = 1.2)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the lp attribute to a non default value``() =
+      let expected = emptyGraphWithLp
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Lp = Some(GraphPoint(1.2, 3.4)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the lwidth attribute to a non default value``() =
+      let expected = emptyGraphWithLWidth
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LWidth = 5.6)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the margin attribute to a single non default value``() =
+      let expected = emptyGraphWithSingleMargin 
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Margin = Margin(7.8))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the margin attribute to an x,y non default value``() =
+      let expected = emptyGraphWithXYMargin 
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Margin = Margin(GraphPoint(7.8, 9.1)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the maxiter attribute to a non default value``() =
+      let expected = emptyGraphWithMaxIter 
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, MaxIter = 999)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the mclimit attribute to a non default value``() =
+      let expected = emptyGraphWithMcLimit 
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, McLimit = 1.5)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the mindist attribute to a non default value``() =
+      let expected = emptyGraphWithMinDist
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, MinDist = 0.4)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the mode attribute to a value of 'major'``() =
+      let expected = emptyGraphWithModeMajor
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Mode = Mode.Major)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the mode attribute to a value of 'KK'``() =
+      let expected = emptyGraphWithModeKK
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Mode = Mode.KK)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the mode attribute to a value of 'hier'``() =
+      let expected = emptyGraphWithModeHier
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Mode = Mode.Hier)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the mode attribute to a value of 'ipsep'``() =
+      let expected = emptyGraphWithModeIpSep
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Mode = Mode.IpSep)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the mode attribute to a value of 'spring'``() =
+      let expected = emptyGraphWithModeSpring
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Mode = Mode.Spring)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the mode attribute to a value of 'maxent'``() =
+      let expected = emptyGraphWithModeMaxEnt
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Mode = Mode.MaxEnt)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the model attribute to a value of 'shortpath'``() =
+      let expected = emptyGraphWithModelShortPath
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Model = Model.ShortPath)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the model attribute to a value of 'circuit'``() =
+      let expected = emptyGraphWithModelCircuit
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Model = Model.Circuit)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the model attribute to a value of 'subset'``() =
+      let expected = emptyGraphWithModelSubset
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Model = Model.Subset)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the model attribute to a value of 'mds'``() =
+      let expected = emptyGraphWithModelMds
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Model = Model.Mds)
+      let actual = sut.ToString()
+      actual |> should equal expected

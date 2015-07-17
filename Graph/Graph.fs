@@ -281,6 +281,42 @@ type Layers(layers : Layer[]) =
          |> Array.map (fun n -> n.ToString())
       String.Join(sep, layerIndices)
 
+type GraphPoint(x : float, y : float) =
+   member __.X = x
+   member __.Y = y
+   override __.ToString() =
+      sprintf "%g,%g" x y
+
+type Margin(size : GraphPoint) =
+   member __.Size = size
+   new (singleSize : float) =
+      Margin(GraphPoint(singleSize, singleSize))
+   override __.ToString() =
+      if size.X = size.Y then
+         sprintf "%g" size.X 
+      else
+         size.ToString()
+
+type Mode =
+| Major
+| KK
+| Hier
+| IpSep
+| Spring
+| MaxEnt
+   override this.ToString() =
+      match this with
+      | KK -> "KK"
+      | _ -> (getUnionCaseName this).ToLowerInvariant()
+
+type Model =
+| ShortPath
+| Circuit
+| Subset
+| Mds
+   override this.ToString() = 
+      (getUnionCaseName this).ToLowerInvariant()
+
 type Graph
    (
       id : Id, 
@@ -331,6 +367,18 @@ type Graph
    let defaultLayerListSep = ","
    let defaultLayers = Layers([||])
    let defaultLayerSep = ":"
+   let defaultLayout = ""
+   let defaultLevels = Int32.MaxValue
+   let defaultLevelsGap = 0.0
+   let defaultLHeight = 0.0
+   let defaultLp : GraphPoint option = None
+   let defaultLWidth = 0.0
+   let defaultMargin = Margin(0.0)
+   let defaultMaxIter = 0
+   let defaultMcLimit = 1.0
+   let defaultMinDist = 1.0
+   let defaultMode = Mode.Major
+   let defaultModel = Model.ShortPath
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -390,6 +438,18 @@ type Graph
    member val LayerListSep = defaultLayerListSep with get, set
    member val Layers = defaultLayers with get, set
    member val LayerSep = defaultLayerSep with get, set
+   member val Layout = defaultLayout with get, set
+   member val Levels = defaultLevels with get, set
+   member val LevelsGap = defaultLevelsGap with get, set
+   member val LHeight = defaultLHeight with get, set
+   member val Lp = defaultLp with get, set
+   member val LWidth = defaultLWidth with get, set
+   member val Margin = defaultMargin with get, set
+   member val MaxIter = defaultMaxIter with get, set
+   member val McLimit = defaultMcLimit with get, set
+   member val MinDist = defaultMinDist with get, set
+   member val Mode = defaultMode with get, set
+   member val Model = defaultModel with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -482,6 +542,31 @@ type Graph
          dict.["layersep"] <- this.LayerSep
       if this.Layers.AllSelected |> not then
          dict.["layerselect"] <- this.Layers.LayerSelect(this.LayerListSep)
+      if this.Layout <> defaultLayout then
+         dict.["layout"] <- this.Layout
+      if this.Levels <> defaultLevels then
+         dict.["levels"] <- this.Levels.ToString()
+      if this.LevelsGap <> defaultLevelsGap then
+         dict.["levelsgap"] <- sprintf "%g" this.LevelsGap
+      if this.LHeight <> defaultLHeight then
+         dict.["lheight"] <- sprintf "%g" this.LHeight
+      match this.Lp with
+      | Some(lp) -> dict.["lp"] <- lp.ToString()
+      | None -> ()
+      if this.LWidth <> defaultLWidth then
+         dict.["lwidth"] <- sprintf "%g" this.LWidth
+      if this.Margin <> defaultMargin then
+         dict.["margin"] <- this.Margin.ToString()
+      if this.MaxIter <> defaultMaxIter then
+         dict.["maxiter"] <- this.MaxIter.ToString()
+      if this.McLimit <> defaultMcLimit then
+         dict.["mclimit"] <- sprintf "%g" this.McLimit
+      if this.MinDist <> defaultMinDist then
+         dict.["mindist"] <- sprintf "%g" this.MinDist
+      if this.Mode <> defaultMode then
+         dict.["mode"] <- this.Mode.ToString()
+      if this.Model <> defaultModel then
+         dict.["model"] <- this.Model.ToString()
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

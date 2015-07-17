@@ -441,6 +441,46 @@ module __ =
       {\r\n\
       \x20\x20[ model = \"mds\" ]\
       }"
+   let emptyGraphWithMosek = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ mosek = true ]\
+      }"
+   let emptyGraphWithNodeSep = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ nodesep = 0.8 ]\
+      }"
+   let emptyGraphWithNoJustify = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ nojustify = true ]\
+      }"
+   let emptyGraphWithNormalizeTrue = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ normalize = true ]\
+      }"
+   let emptyGraphWithNormalizeNumber = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ normalize = 22.5 ]\
+      }"
+   let emptyGraphWithNoTranslate = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ notranslate = true ]\
+      }"
+   let emptyGraphWithNsLimit = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ nslimit = 3.2 ]\
+      }"
+   let emptyGraphWithNsLimit1 = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ nslimit1 = 5.4 ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -1121,3 +1161,60 @@ type GraphTests() =
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Model = Model.Mds)
       let actual = sut.ToString()
       actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the mosek attribute to a non default value``() =
+      let expected = emptyGraphWithMosek
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Mosek = true)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the nodesep attribute to a non default value``() =
+      let expected = emptyGraphWithNodeSep
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, NodeSep = NodeSep(0.8))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the nojustify attribute to a non default value``() =
+      let expected = emptyGraphWithNoJustify
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, NoJustify = true)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the normalize attribute to a true``() =
+      let expected = emptyGraphWithNormalizeTrue
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Normalize = Normalize.Bool(true))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the normalize attribute to a number``() =
+      let expected = emptyGraphWithNormalizeNumber
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Normalize = Normalize.Degrees(22.5))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the notranslate element to a non default value``() =
+      let expected = emptyGraphWithNoTranslate
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, NoTranslate = true)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the nslimit element to a non default value``() =
+      let expected = emptyGraphWithNsLimit
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, NsLimit = 3.2)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the nslimit1 element to a non default value``() =
+      let expected = emptyGraphWithNsLimit1
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, NsLimit1 = 5.4)
+      let actual = sut.ToString()
+      actual |> should equal expected
+

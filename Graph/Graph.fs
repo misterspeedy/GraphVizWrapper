@@ -317,6 +317,22 @@ type Model =
    override this.ToString() = 
       (getUnionCaseName this).ToLowerInvariant()
 
+type NodeSep(inches : double) =
+   do
+      if inches < 0.02 then
+         raise (ArgumentOutOfRangeException("Node separation must be at least 0.02 inches"))
+   member __.Inches = inches
+   override __.ToString() =
+      sprintf "%g" inches
+
+type Normalize =
+| Bool of bool
+| Degrees of float
+   override this.ToString() =
+      match this with
+      | Bool b -> b.ToString().ToLowerInvariant()
+      | Degrees d -> sprintf "%g" d
+
 type Graph
    (
       id : Id, 
@@ -379,6 +395,13 @@ type Graph
    let defaultMinDist = 1.0
    let defaultMode = Mode.Major
    let defaultModel = Model.ShortPath
+   let defaultMosek = false
+   let defaultNodeSep = NodeSep(0.25)
+   let defaultNoJustify = false
+   let defaultNormalize = Normalize.Bool(false)
+   let defaultNoTranslate = false
+   let defaultNsLimit = 0.0
+   let defaultNsLimit1 = 0.0
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -450,6 +473,13 @@ type Graph
    member val MinDist = defaultMinDist with get, set
    member val Mode = defaultMode with get, set
    member val Model = defaultModel with get, set
+   member val Mosek = defaultMosek with get, set
+   member val NodeSep = defaultNodeSep with get, set
+   member val NoJustify = defaultNoJustify with get, set
+   member val Normalize = defaultNormalize with get, set
+   member val NoTranslate = defaultNoTranslate with get, set
+   member val NsLimit = defaultNsLimit with get, set
+   member val NsLimit1 = defaultNsLimit1 with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -470,7 +500,7 @@ type Graph
          dict.["bgcolor"] <- c.ToString()
       | _ -> ()
       if this.Center <> defaultCenter then
-         dict.["center"] <- (defaultCenter |> not).ToString().ToLowerInvariant()
+         dict.["center"] <- this.Center.ToString().ToLowerInvariant()
       if this.Charset <> defaultCharSet then
          dict.["charset"] <- this.Charset
       if this.ClusterRank <> defaultClusterRank then
@@ -482,9 +512,9 @@ type Graph
       if this.Comment <> defaultComment then
          dict.["comment"] <- this.Comment
       if this.Compound <> defaultCompound then
-         dict.["compound"] <- (defaultCompound |> not).ToString().ToLowerInvariant()
+         dict.["compound"] <- this.Compound.ToString().ToLowerInvariant()
       if this.Concentrate <> defaultConcentrate then
-         dict.["concentrate"] <- (defaultConcentrate |> not).ToString().ToLowerInvariant()
+         dict.["concentrate"] <- this.Concentrate.ToString().ToLowerInvariant()
       match this.DefaultDistance with
       | Some d -> 
          dict.["defaultdist"] <- sprintf "%g" d
@@ -514,7 +544,7 @@ type Graph
       if this.FontSize <> defaultFontSize then
          dict.["fontsize"] <- this.FontSize.ToString()
       if this.ForceLabels <> defaultForceLabels then
-         dict.["forcelabels"] <- (defaultForceLabels |> not).ToString().ToLowerInvariant()
+         dict.["forcelabels"] <- this.ForceLabels.ToString().ToLowerInvariant()
       if this.GradientAngle <> defaultGradientAngle then
          dict.["gradientangle"] <- this.GradientAngle.ToString()
       if this.IdAttribute <> defaultIdAttribute then
@@ -567,6 +597,20 @@ type Graph
          dict.["mode"] <- this.Mode.ToString()
       if this.Model <> defaultModel then
          dict.["model"] <- this.Model.ToString()
+      if this.Mosek <> defaultMosek then
+         dict.["mosek"] <- this.Mosek.ToString().ToLowerInvariant()
+      if this.NodeSep <> defaultNodeSep then
+         dict.["nodesep"] <- this.NodeSep.ToString()
+      if this.NoJustify <> defaultNoJustify then
+         dict.["nojustify"] <- this.NoJustify.ToString().ToLowerInvariant()
+      if this.Normalize <> defaultNormalize then
+         dict.["normalize"] <- this.Normalize.ToString()
+      if this.NoTranslate <> defaultNoTranslate then
+         dict.["notranslate"] <- this.NoTranslate.ToString().ToLowerInvariant()
+      if this.NsLimit <> defaultNsLimit then
+         dict.["nslimit"] <- sprintf "%g" this.NsLimit
+      if this.NsLimit1 <> defaultNsLimit1 then
+         dict.["nslimit1"] <- sprintf "%g" this.NsLimit1
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

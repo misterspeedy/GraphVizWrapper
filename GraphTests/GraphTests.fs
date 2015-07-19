@@ -481,6 +481,36 @@ module __ =
       {\r\n\
       \x20\x20[ nslimit1 = 5.4 ]\
       }"
+   let emptyGraphWithOrderingOut = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ordering = \"out\" ]\
+      }"
+   let emptyGraphWithOrderingIn = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ordering = \"in\" ]\
+      }"
+   let emptyGraphWithOrientation = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ orientation = 22.5 ]\
+      }"
+   // breadthfirst is the default:
+   let emptyGraphWithOutputOrderBreadthFirst = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      }"
+   let emptyGraphWithOutputOrderNodesFirst = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ outputorder = \"nodesfirst\" ]\
+      }"
+   let emptyGraphWithOutputOrderEdgesFirst = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ outputorder = \"edgesfirst\" ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -1218,3 +1248,44 @@ type GraphTests() =
       let actual = sut.ToString()
       actual |> should equal expected
 
+   [<Test>]
+   member __.``We can set the ordering element to 'out'``() =
+      let expected = emptyGraphWithOrderingOut
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Ordering = Some(Ordering.Out))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the ordering element to 'in'``() =
+      let expected = emptyGraphWithOrderingIn
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Ordering = Some(Ordering.In))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the orientation element to a non default value``() =
+      let expected = emptyGraphWithOrientation
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Orientation = 22.5)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the outputorder element to 'breadthfirst'``() =
+      let expected = emptyGraphWithOutputOrderBreadthFirst
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, OutputOrder = OutputOrder.BreadthFirst)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the outputorder element to 'nodesfirst'``() =
+      let expected = emptyGraphWithOutputOrderNodesFirst
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, OutputOrder = OutputOrder.NodesFirst)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the outputorder element to 'edgesfirst``() =
+      let expected = emptyGraphWithOutputOrderEdgesFirst
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, OutputOrder = OutputOrder.EdgesFirst)
+      let actual = sut.ToString()
+      actual |> should equal expected

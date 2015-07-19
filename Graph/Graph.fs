@@ -333,6 +333,19 @@ type Normalize =
       | Bool b -> b.ToString().ToLowerInvariant()
       | Degrees d -> sprintf "%g" d
 
+type Ordering =
+| Out
+| In
+   override this.ToString() =
+      (getUnionCaseName this).ToLowerInvariant()
+
+type OutputOrder =
+| BreadthFirst
+| NodesFirst
+| EdgesFirst
+   override this.ToString() =
+      (getUnionCaseName this).ToLowerInvariant()
+
 type Graph
    (
       id : Id, 
@@ -402,6 +415,9 @@ type Graph
    let defaultNoTranslate = false
    let defaultNsLimit = 0.0
    let defaultNsLimit1 = 0.0
+   let defaultOrdering : Ordering option = None
+   let defaultOrientation = 0.0
+   let defaultOutputOrder = OutputOrder.BreadthFirst
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -457,7 +473,6 @@ type Graph
       and set(value) = 
          if value then this.Rotation <- 90
          else if this.Rotation = 90 then this.Rotation <- 0
-   member val Rotation = defaultRotation with get, set
    member val LayerListSep = defaultLayerListSep with get, set
    member val Layers = defaultLayers with get, set
    member val LayerSep = defaultLayerSep with get, set
@@ -480,6 +495,12 @@ type Graph
    member val NoTranslate = defaultNoTranslate with get, set
    member val NsLimit = defaultNsLimit with get, set
    member val NsLimit1 = defaultNsLimit1 with get, set
+   member val Ordering = defaultOrdering with get, set
+   // TODO wrap over 360?
+   member val Orientation = defaultOrientation with get, set 
+   // TODO wrap over 360?
+   member val Rotation = defaultRotation with get, set
+   member val OutputOrder = defaultOutputOrder with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -611,6 +632,13 @@ type Graph
          dict.["nslimit"] <- sprintf "%g" this.NsLimit
       if this.NsLimit1 <> defaultNsLimit1 then
          dict.["nslimit1"] <- sprintf "%g" this.NsLimit1
+      match this.Ordering with
+      | Some o -> dict.["ordering"] <- o.ToString()
+      | None -> ()
+      if this.Orientation <> defaultOrientation then
+         dict.["orientation"] <- sprintf "%g" this.Orientation
+      if this.OutputOrder <> defaultOutputOrder then
+         dict.["outputorder"] <- this.OutputOrder.ToString()
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

@@ -511,6 +511,101 @@ module __ =
       {\r\n\
       \x20\x20[ outputorder = \"edgesfirst\" ]\
       }"
+   let emptyGraphWithOverLapTrue = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = true ]\
+      }"
+   let emptyGraphWithOverLapFalse = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = false ]\
+      }"
+   let emptyGraphWithOverLapScale = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"scale\" ]\
+      }"
+   let emptyGraphWithOverLapPrism = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"prism\" ]\
+      }"
+   let emptyGraphWithOverLapPrismSuffix = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"prism3\" ]\
+      }"
+   let emptyGraphWithOverLapVoronoi = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"voronoi\" ]\
+      }"
+   let emptyGraphWithOverLapscaleXY = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"scalexy\" ]\
+      }"
+   let emptyGraphWithOverLapCompress = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"compress\" ]\
+      }"
+   let emptyGraphWithOverLapVpsc = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"vpsc\" ]\
+      }"
+   let emptyGraphWithOverLapOrtho = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"ortho\" ]\
+      }"
+   let emptyGraphWithOverLapOrthoXY = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"orthoxy\" ]\
+      }"
+   let emptyGraphWithOverLapOrthoYX = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"orthoyx\" ]\
+      }"
+   let emptyGraphWithOverLapOrtho_YX = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"ortho_yx\" ]\
+      }"
+   let emptyGraphWithOverLapPOrtho = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"portho\" ]\
+      }"
+   let emptyGraphWithOverLapPOrthoXY = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"porthoxy\" ]\
+      }"
+   let emptyGraphWithOverLapPOrthoYX = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"porthoyx\" ]\
+      }"
+   let emptyGraphWithOverLapPOrtho_YX = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"portho_yx\" ]\
+      }"
+   let emptyGraphWithOverLapIpSep = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"ipsep\" ]\
+      }"
+   let emptyGraphWithOverLapTruePrefix = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap = \"2:true\" ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -1289,3 +1384,137 @@ type GraphTests() =
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, OutputOrder = OutputOrder.EdgesFirst)
       let actual = sut.ToString()
       actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the overlap element to 'true'``() =
+      let expected = emptyGraphWithOverLapTrue
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.True)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the overlap element to 'false'``() =
+      let expected = emptyGraphWithOverLapFalse
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.False)
+      let actual = sut.ToString()
+      actual |> should equal expected
+ 
+   [<Test>]
+   member __.``We can set the overlap element to 'scale'``() =
+      let expected = emptyGraphWithOverLapScale
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.Scale)
+      let actual = sut.ToString()
+      actual |> should equal expected
+ 
+   [<Test>]
+   member __.``We can set the overlap element to 'prism'``() =
+      let expected = emptyGraphWithOverLapPrism
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.Prism)
+      let actual = sut.ToString()
+      actual |> should equal expected
+ 
+   [<Test>]
+   member __.``We can set the overlap element to 'prism3'``() =
+      let expected = emptyGraphWithOverLapPrismSuffix
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some (Overlap.PrismN(3)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+ 
+   [<Test>]
+   member __.``We can set the overlap element to 'voronoi'``() =
+      let expected = emptyGraphWithOverLapVoronoi
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.Voronoi)
+      let actual = sut.ToString()
+      actual |> should equal expected
+ 
+   [<Test>]
+   member __.``We can set the overlap element to 'scalexy``() =
+      let expected = emptyGraphWithOverLapscaleXY
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.ScaleXY)
+      let actual = sut.ToString()
+      actual |> should equal expected
+ 
+   [<Test>]
+   member __.``We can set the overlap element to 'compress'``() =
+      let expected = emptyGraphWithOverLapCompress
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.Compress)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  
+   [<Test>]
+   member __.``We can set the overlap element to 'vpsc'``() =
+      let expected = emptyGraphWithOverLapVpsc
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.Vpsc)
+      let actual = sut.ToString()
+      actual |> should equal expected
+ 
+   [<Test>]
+   member __.``We can set the overlap element to 'ortho'``() =
+      let expected = emptyGraphWithOverLapOrtho
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.Ortho)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  
+   [<Test>]
+   member __.``We can set the overlap element to 'orthoxy'``() =
+      let expected = emptyGraphWithOverLapOrthoXY
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.OrthoXY)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  
+   [<Test>]
+   member __.``We can set the overlap element to 'orthoyx'``() =
+      let expected = emptyGraphWithOverLapOrthoYX
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.OrthoYX)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  
+   [<Test>]
+   member __.``We can set the overlap element to 'ortho_yx'``() =
+      let expected = emptyGraphWithOverLapOrtho_YX
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.Ortho_YX)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  
+   [<Test>]
+   member __.``We can set the overlap element to 'portho'``() =
+      let expected = emptyGraphWithOverLapPOrtho
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.POrtho)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  
+   [<Test>]
+   member __.``We can set the overlap element to 'porthoxy'``() =
+      let expected = emptyGraphWithOverLapPOrthoXY
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.POrthoXY)
+      let actual = sut.ToString()
+      actual |> should equal expected
+ 
+   [<Test>]
+   member __.``We can set the overlap element to 'porthoyx'``() =
+      let expected = emptyGraphWithOverLapPOrthoYX
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.POrthoYX)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  
+   [<Test>]
+   member __.``We can set the overlap element to 'portho_yx'``() =
+      let expected = emptyGraphWithOverLapPOrtho_YX
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.POrtho_YX)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  
+   [<Test>]
+   member __.``We can set the overlap element to 'ipsep'``() =
+      let expected = emptyGraphWithOverLapIpSep
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.IpSep)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  
+   [<Test>]
+   member __.``We can set the overlap element to '2:true'``() =
+      let expected = emptyGraphWithOverLapTruePrefix
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.True, OverlapPrefix = 2)
+      let actual = sut.ToString()
+      actual |> should equal expected
+  

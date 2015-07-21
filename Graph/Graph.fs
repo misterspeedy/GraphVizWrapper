@@ -346,6 +346,35 @@ type OutputOrder =
    override this.ToString() =
       (getUnionCaseName this).ToLowerInvariant()
 
+type Overlap =
+| True  
+| False  
+| Scale  
+| Prism  
+| PrismN of suffix:int  
+| Voronoi  
+| ScaleXY  
+| Compress  
+| Vpsc  
+| Ortho  
+| OrthoXY  
+| OrthoYX  
+| Ortho_YX  
+| POrtho  
+| POrthoXY  
+| POrthoYX  
+| POrtho_YX  
+| IpSep  
+   member this.ToString(prefix : int) =
+      let s = 
+         match this with
+         | PrismN n -> sprintf "prism%i" n
+         | _ -> (getUnionCaseName this).ToLowerInvariant()
+      if prefix > 0 then
+         sprintf "%i:%s" prefix s
+      else
+         s
+
 type Graph
    (
       id : Id, 
@@ -418,6 +447,8 @@ type Graph
    let defaultOrdering : Ordering option = None
    let defaultOrientation = 0.0
    let defaultOutputOrder = OutputOrder.BreadthFirst
+   let defaultOverlap : Overlap option = None
+   let defaultOverlapPrefix : int = 0
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -501,6 +532,8 @@ type Graph
    // TODO wrap over 360?
    member val Rotation = defaultRotation with get, set
    member val OutputOrder = defaultOutputOrder with get, set
+   member val Overlap = defaultOverlap with get, set
+   member val OverlapPrefix = defaultOverlapPrefix with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -639,6 +672,9 @@ type Graph
          dict.["orientation"] <- sprintf "%g" this.Orientation
       if this.OutputOrder <> defaultOutputOrder then
          dict.["outputorder"] <- this.OutputOrder.ToString()
+      match this.Overlap with
+      | Some o -> dict.["overlap"] <- o.ToString(this.OverlapPrefix)
+      | None -> ()
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

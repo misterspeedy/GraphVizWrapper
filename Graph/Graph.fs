@@ -375,6 +375,56 @@ type Overlap =
       else
          s
 
+type Pack =
+| True of margin:int option
+| False
+   override this.ToString() =
+      match this with
+      | True(Some m) -> sprintf "%i" m
+      | True(None) -> sprintf "true"
+      | False -> sprintf "false"
+
+type PackModeOrdering =
+| Default
+| ColumnMajor
+| ColumnMajorN of int
+   override this.ToString() =
+      match this with
+      | Default -> ""
+      | ColumnMajor -> "c"
+      | ColumnMajorN n -> sprintf "c%i" n
+
+type PackModeAlignment =
+| Default
+| Top 
+| Bottom
+| Left
+| Right
+   override this.ToString() =
+      match this with
+      | Default -> ""
+      | _ -> (getUnionCaseName this).ToLowerInvariant().[0].ToString()
+
+type PackModeInsertionOrder =
+| Default
+| User
+   override this.ToString() =
+      match this with
+      | Default -> ""
+      | _ -> (getUnionCaseName this).ToLowerInvariant().[0].ToString()
+
+type PackMode =
+| Node
+| Clust
+| Graph
+| Array of ordering:PackModeOrdering * alignment:PackModeAlignment * insertionOrder:PackModeInsertionOrder
+   override this.ToString() =
+      match this with
+      | Array(ordering, alignment, insertionOrder) ->
+         let flags = sprintf "%s%s%s" (ordering.ToString()) (alignment.ToString()) (insertionOrder.ToString())
+         if flags.Length > 0 then sprintf "array_%s" flags else "array"
+      | _ -> (getUnionCaseName this).ToLowerInvariant()
+
 type Graph
    (
       id : Id, 
@@ -448,7 +498,11 @@ type Graph
    let defaultOrientation = 0.0
    let defaultOutputOrder = OutputOrder.BreadthFirst
    let defaultOverlap : Overlap option = None
-   let defaultOverlapPrefix : int = 0
+   let defaultOverlapPrefix = 0
+   let defaultOverlapScaling = -4.0
+   let defaultOverlapShrink = true
+   let defaultPack = Pack.False
+   let defaultPackMode = PackMode.Node
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -534,6 +588,10 @@ type Graph
    member val OutputOrder = defaultOutputOrder with get, set
    member val Overlap = defaultOverlap with get, set
    member val OverlapPrefix = defaultOverlapPrefix with get, set
+   member val OverlapScaling = defaultOverlapScaling with get, set
+   member val OverlapShrink = defaultOverlapShrink with get, set
+   member val Pack = defaultPack with get, set
+   member val PackMode = defaultPackMode with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -675,6 +733,14 @@ type Graph
       match this.Overlap with
       | Some o -> dict.["overlap"] <- o.ToString(this.OverlapPrefix)
       | None -> ()
+      if this.OverlapScaling <> defaultOverlapScaling then
+         dict.["overlap_scaling"] <- sprintf "%g" this.OverlapScaling
+      if this.OverlapShrink <> defaultOverlapShrink then
+         dict.["overlap_shrink"] <- this.Center.ToString().ToLowerInvariant()
+      if this.Pack <> defaultPack then
+         dict.["pack"] <- this.Pack.ToString()
+      if this.PackMode <> defaultPackMode then
+         dict.["packmode"] <- this.PackMode.ToString()
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

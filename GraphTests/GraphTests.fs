@@ -606,6 +606,101 @@ module __ =
       {\r\n\
       \x20\x20[ overlap = \"2:true\" ]\
       }"
+   // -4 is the default
+   let emptyGraphWithOverLapScalingMinus4 = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      }"
+   let emptyGraphWithOverLapScaling = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap_scaling = 3 ]\
+      }"
+   let emptyGraphWithOverLapShrink = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ overlap_shrink = false ]\
+      }"
+   // false is the default
+   let emptyGraphWithPackFalse = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      }"
+   let emptyGraphWithPackTrue = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pack = true ]\
+      }"
+   let emptyGraphWithPackN = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pack = 12 ]\
+      }"
+
+//   ***here none of these tests written - but need to
+//   write expecteds for various flag combinations first
+   // "node", "clust" , "graph" , "array(_flags)?(%d)?"
+   // This is the default
+   let emptyGraphWithPackModeNode = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      }"
+   let emptyGraphWithPackModeClust = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"clust\" ]\
+      }"
+   let emptyGraphWithPackModeGraph = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"graph\" ]\
+      }"
+   let emptyGraphWithPackModeArray = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array\" ]\
+      }"
+   let emptyGraphWithPackModeArrayC = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array_c\" ]\
+      }"
+   let emptyGraphWithPackModeArrayCN = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array_c5\" ]\
+      }"
+   let emptyGraphWithPackModeArrayT = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array_t\" ]\
+      }"
+   let emptyGraphWithPackModeArrayB = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array_b\" ]\
+      }"
+   let emptyGraphWithPackModeArrayL = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array_l\" ]\
+      }"
+   let emptyGraphWithPackModeArrayR = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array_r\" ]\
+      }"
+   let emptyGraphWithPackModeArrayCNR = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array_c3r\" ]\
+      }"
+   let emptyGraphWithPackModeArrayU = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array_u\" ]\
+      }"
+   //TODO Combinations including U
 
 [<TestFixture>]
 type GraphTests() =
@@ -1517,4 +1612,165 @@ type GraphTests() =
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.True, OverlapPrefix = 2)
       let actual = sut.ToString()
       actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the overlap_scaling element to the default``() =
+      let expected = emptyGraphWithOverLapScalingMinus4
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, OverlapScaling = -4.0)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the overlap_scaling element to a non default value``() =
+      let expected = emptyGraphWithOverLapScaling
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, OverlapScaling = 3.0)
+      let actual = sut.ToString()
+      actual |> should equal expected
   
+   [<Test>]
+   member __.``We can set the overlap_shrink element to a non default value``() =
+      let expected = emptyGraphWithOverLapShrink
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, OverlapShrink = false)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack element to false``() =
+      let expected = emptyGraphWithPackFalse
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Pack = Pack.False)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack element to true with no specified margin``() =
+      let expected = emptyGraphWithPackTrue
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Pack = Pack.True(None))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack element to true with a specified margin``() =
+      let expected = emptyGraphWithPackN
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Pack = Pack.True(Some 12))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'node'``() =
+      let expected = emptyGraphWithPackModeNode
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PackMode = PackMode.Node)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'clust'``() =
+      let expected = emptyGraphWithPackModeClust
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PackMode = PackMode.Clust)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'graph'``() =
+      let expected = emptyGraphWithPackModeGraph
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PackMode = PackMode.Graph)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array'``() =
+      let expected = emptyGraphWithPackModeArray
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.Default, 
+                                      PackModeAlignment.Default,
+                                      PackModeInsertionOrder.Default))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array_c'``() =
+      let expected = emptyGraphWithPackModeArrayC
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.ColumnMajor, 
+                                      PackModeAlignment.Default,
+                                      PackModeInsertionOrder.Default))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array_c5'``() =
+      let expected = emptyGraphWithPackModeArrayCN
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.ColumnMajorN(5), 
+                                      PackModeAlignment.Default,
+                                      PackModeInsertionOrder.Default))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array_t'``() =
+      let expected = emptyGraphWithPackModeArrayT
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.Default, 
+                                      PackModeAlignment.Top,
+                                      PackModeInsertionOrder.Default))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array_b'``() =
+      let expected = emptyGraphWithPackModeArrayB
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.Default, 
+                                      PackModeAlignment.Bottom,
+                                      PackModeInsertionOrder.Default))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array_l'``() =
+      let expected = emptyGraphWithPackModeArrayL
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.Default, 
+                                      PackModeAlignment.Left,
+                                      PackModeInsertionOrder.Default))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array_r'``() =
+      let expected = emptyGraphWithPackModeArrayR
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.Default, 
+                                      PackModeAlignment.Right,
+                                      PackModeInsertionOrder.Default))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array_c3r'``() =
+      let expected = emptyGraphWithPackModeArrayCNR
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.ColumnMajorN(3), 
+                                      PackModeAlignment.Right,
+                                      PackModeInsertionOrder.Default))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array_u'``() =
+      let expected = emptyGraphWithPackModeArrayU
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.Default,
+                                      PackModeAlignment.Default,
+                                      PackModeInsertionOrder.User))
+      let actual = sut.ToString()
+      actual |> should equal expected

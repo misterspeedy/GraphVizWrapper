@@ -425,6 +425,44 @@ type PackMode =
          if flags.Length > 0 then sprintf "array_%s" flags else "array"
       | _ -> (getUnionCaseName this).ToLowerInvariant()
 
+// TODO on this and margin and page, consider having the primary constructor take the two args
+type Pad(size : GraphPoint) =
+   member __.Size = size
+   new (singleSize : float) =
+      Pad(GraphPoint(singleSize, singleSize))
+   override __.ToString() =
+      if size.X = size.Y then
+         sprintf "%g" size.X 
+      else
+         size.ToString()
+
+type Page(size : GraphPoint) =
+   member __.Size = size
+   new (singleSize : float) =
+      Page(GraphPoint(singleSize, singleSize))
+   override __.ToString() =
+      if size.X = size.Y then
+         sprintf "%g" size.X 
+      else
+         size.ToString()
+
+type PageDir =
+| BottomLeft
+| BottomRight
+| TopLeft
+| TopRight
+| RightBottom
+| RightTop
+| LeftBottom
+| LeftTop
+   override this.ToString() =
+      let chars = 
+         this
+         |> getUnionCaseName
+         |> Seq.filter (fun s -> s.ToString().ToUpperInvariant() = s.ToString())
+         |> Array.ofSeq
+      String(chars)
+
 type Graph
    (
       id : Id, 
@@ -503,6 +541,9 @@ type Graph
    let defaultOverlapShrink = true
    let defaultPack = Pack.False
    let defaultPackMode = PackMode.Node
+   let defaultPad = Pad(0.0555)
+   let defaultPage : Page option = None
+   let defaultPageDir = PageDir.BottomLeft
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -592,6 +633,9 @@ type Graph
    member val OverlapShrink = defaultOverlapShrink with get, set
    member val Pack = defaultPack with get, set
    member val PackMode = defaultPackMode with get, set
+   member val Pad = defaultPad with get, set
+   member val Page = defaultPage with get, set
+   member val PageDir = defaultPageDir with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       // TODO could consider putting an attribute on the relevant members
@@ -741,6 +785,13 @@ type Graph
          dict.["pack"] <- this.Pack.ToString()
       if this.PackMode <> defaultPackMode then
          dict.["packmode"] <- this.PackMode.ToString()
+      if this.Pad <> defaultPad then
+         dict.["pad"] <- this.Pad.ToString()
+      match this.Page with
+      | Some p -> dict.["page"] <- p.ToString()
+      | None -> ()
+      if this.PageDir <> defaultPageDir then
+         dict.["pagedir"] <- this.PageDir.ToString()
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

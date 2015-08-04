@@ -700,7 +700,71 @@ module __ =
       {\r\n\
       \x20\x20[ packmode = \"array_u\" ]\
       }"
-   //TODO Combinations including U
+   let emptyGraphWithPackModeArrayCNRU = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ packmode = \"array_c3ru\" ]\
+      }"
+   let emptyGraphWithPadN = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pad = 1.2 ]\
+      }"
+   let emptyGraphWithPadXY = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pad = \"1.2,3.4\" ]\
+      }"
+   let emptyGraphWithPageN = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ page = 4.5 ]\
+      }"
+   let emptyGraphWithPageXY = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ page = \"4.5,6.7\" ]\
+      }"
+   // This is the default:
+   let emptyGraphWithPageDirBL = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      }"
+   let emptyGraphWithPageDirBR = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pagedir = \"BR\" ]\
+      }"
+   let emptyGraphWithPageDirTL = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pagedir = \"TL\" ]\
+      }"
+   let emptyGraphWithPageDirTR = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pagedir = \"TR\" ]\
+      }"
+   let emptyGraphWithPageDirRB = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pagedir = \"RB\" ]\
+      }"
+   let emptyGraphWithPageDirRT = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pagedir = \"RT\" ]\
+      }"
+   let emptyGraphWithPageDirLB = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pagedir = \"LB\" ]\
+      }"
+   let emptyGraphWithPageDirLT = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pagedir = \"LT\" ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -1772,5 +1836,112 @@ type GraphTests() =
             PackMode = PackMode.Array(PackModeOrdering.Default,
                                       PackModeAlignment.Default,
                                       PackModeInsertionOrder.User))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pack mode element to 'array_c3ru'``() =
+      let expected = emptyGraphWithPackModeArrayCNRU
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
+            PackMode = PackMode.Array(PackModeOrdering.ColumnMajorN(3),
+                                      PackModeAlignment.Right,
+                                      PackModeInsertionOrder.User))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pad element to a single value``() =
+      let expected = emptyGraphWithPadN
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Pad = Pad(1.2))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pad element to a pair of values``() =
+      let expected = emptyGraphWithPadXY
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Pad = Pad(GraphPoint(1.2, 3.4)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the page element to a single value``() =
+      let expected = emptyGraphWithPageN
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Page = (Page(4.5) |> Some))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the page element to a pair of values``() =
+      let expected = emptyGraphWithPageXY
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Page = (Page(GraphPoint(4.5, 6.7)) |> Some))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pagedir element to 'BL'``() =
+      let expected = emptyGraphWithPageDirBL
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PageDir = PageDir.BottomLeft)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pagedir element to 'BR'``() =
+      let expected = emptyGraphWithPageDirBR
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PageDir = PageDir.BottomRight)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pagedir element to 'TL'``() =
+      let expected = emptyGraphWithPageDirTL
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PageDir = PageDir.TopLeft)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pagedir element to 'TR'``() =
+      let expected = emptyGraphWithPageDirTR
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PageDir = PageDir.TopRight)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pagedir element to 'RB'``() =
+      let expected = emptyGraphWithPageDirRB
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PageDir = PageDir.RightBottom)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pagedir element to 'RT'``() =
+      let expected = emptyGraphWithPageDirRT
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PageDir = PageDir.RightTop)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pagedir element to 'LB'``() =
+      let expected = emptyGraphWithPageDirLB
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PageDir = PageDir.LeftBottom)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pagedir element to 'LT'``() =
+      let expected = emptyGraphWithPageDirLT
+      let sut = 
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PageDir = PageDir.LeftTop)
       let actual = sut.ToString()
       actual |> should equal expected

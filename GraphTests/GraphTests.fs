@@ -636,10 +636,20 @@ module __ =
       {\r\n\
       \x20\x20[ pack = 12 ]\
       }"
+   let emptyGraphWithRankSepOne = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ranksep = 1.2 ]\
+      }"
+   let emptyGraphWithRankSepSeveral = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ranksep = \"1.2:3.4:5.6\"]\
+      }"
+   // TODO implement 'equally' syntax for ranksep
+   // ? implement differences for the different graph types
+    
 
-//   ***here none of these tests written - but need to
-//   write expecteds for various flag combinations first
-   // "node", "clust" , "graph" , "array(_flags)?(%d)?"
    // This is the default
    let emptyGraphWithPackModeNode = 
       "graph \"id\"\r\n\
@@ -804,6 +814,26 @@ module __ =
       "graph \"id\"\r\n\
       {\r\n\
       \x20\x20[ quantum = 1.23 ]\
+      }"
+   // This is the default:
+   let emptyGraphWithRankdirTB = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      }"
+   let emptyGraphWithRankdirLR = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ rankdir = \"LR\" ]\
+      }"
+   let emptyGraphWithRankdirBT = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ rankdir = \"BT\" ]\
+      }"
+   let emptyGraphWithRankdirRL = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ rankdir = \"RL\" ]\
       }"
 
 [<TestFixture>]
@@ -2054,6 +2084,34 @@ type GraphTests() =
    member __.``We can set the quantum attribute to a non default value``() =
       let expected = emptyGraphWithQuantum
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Quantum = 1.23)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the rankDir attribute to 'TB'``() =
+      let expected = emptyGraphWithRankdirTB
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, RankDir = RankDir.TopBottom)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the rankDir attribute to 'LR'``() =
+      let expected = emptyGraphWithRankdirLR
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, RankDir = RankDir.LeftRight)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the rankDir attribute to 'BT'``() =
+      let expected = emptyGraphWithRankdirBT
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, RankDir = RankDir.BottomTop)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the rankDir attribute to 'RL'``() =
+      let expected = emptyGraphWithRankdirRL
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, RankDir = RankDir.RightLeft)
       let actual = sut.ToString()
       actual |> should equal expected
 

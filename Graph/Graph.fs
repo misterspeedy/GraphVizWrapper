@@ -483,6 +483,29 @@ type Quadtree =
       | Normal | Fast -> (getUnionCaseName this).ToLowerInvariant()
       | None_ -> "none"
 
+type RankDir =
+| TopBottom
+| LeftRight
+| BottomTop
+| RightLeft
+   // TODO eliminate repetition - get gaps function
+   override this.ToString() =
+      let chars = 
+         this
+         |> getUnionCaseName
+         |> Seq.filter (fun s -> s.ToString().ToUpperInvariant() = s.ToString())
+         |> Array.ofSeq
+      String(chars)
+
+type DoubleList(list : double list) =
+   override __.ToString() =
+      let items = 
+         list
+         |> List.rev
+         |> List.map (fun wc -> wc.ToString())
+         |> Array.ofList
+      String.Join(":", items)
+
 type Graph
    (
       id : Id, 
@@ -567,6 +590,8 @@ type Graph
    let defaultPenColor = GraphColor.SingleColor(Color.Black)
    let defaultQuadtree = Quadtree.Normal
    let defaultQuantum = 0.0
+   let defaultRankDir = RankDir.TopBottom
+   let defaultRankSep : DoubleList option = None
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -662,6 +687,8 @@ type Graph
    member val PenColor = defaultPenColor with get, set
    member val Quadtree = defaultQuadtree with get, set
    member val Quantum = defaultQuantum with get, set
+   member val RankDir = defaultRankDir with get, set
+   member val RankSep = defaultRankSep with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       let addIf v dv name =
@@ -752,6 +779,8 @@ type Graph
       addIf this.PenColor defaultPenColor "pencolor"
       addIf this.Quadtree defaultQuadtree "quadtree"
       addIf this.Quantum defaultQuantum "quantum"
+      addIf this.RankDir defaultRankDir "rankdir"
+      addIf this.RankSep defaultRankSep "ranksep"
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

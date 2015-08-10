@@ -765,6 +765,46 @@ module __ =
       {\r\n\
       \x20\x20[ pagedir = \"LT\" ]\
       }"
+   let emptyGraphWithPenColorNamed = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pencolor = \"PeachPuff\" ]\
+      }"
+   let emptyGraphWithPenColorArgb = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pencolor = \"#01020304\" ]\
+      }"
+   let emptyGraphWithPenColorList = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pencolor = \"PeachPuff;0.4:#01020304;0.6\" ]\
+      }"
+   let emptyGraphWithPenColorListNoWeighting = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ pencolor = \"PeachPuff:#01020304\" ]\
+      }"
+   // This is the default
+   let emptyGraphWithQuadtreeNormal = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      }"
+   let emptyGraphWithQuadtreeNone = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ quadtree = \"none\" ]\
+      }"
+   let emptyGraphWithQuadtreeFast = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ quadtree = \"fast\" ]\
+      }"
+   let emptyGraphWithQuantum = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ quantum = 1.23 ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -1090,7 +1130,7 @@ type GraphTests() =
    [<Test>]
    member __.``We can set the fontcolor attribute to a non default value``() =
       let expected = emptyGraphWithFontColor
-      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, FontColor = Color.PeachPuff)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, FontColor = FontColor(Color.PeachPuff))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1256,14 +1296,15 @@ type GraphTests() =
       let expected = emptyGraphWithLayersUsingNonDefaultSep
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, 
-            LayerSep = "|", Layers = Layers([|Layer("layer1", true); Layer("layer2", true)|]))
+            Layers = Layers([|Layer("layer1", true); Layer("layer2", true)|], "|"))
       let actual = sut.ToString()
       actual |> should equal expected
       
    [<Test>]
    member __.``We can set the layersep attribute to a non default value``() =
       let expected = emptyGraphWithLayerSep
-      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, LayerSep = "|")
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
+      sut.Layers.LayerSep <- "|"
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1945,3 +1986,74 @@ type GraphTests() =
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PageDir = PageDir.LeftTop)
       let actual = sut.ToString()
       actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pencolor attribute to a non default value using a color name``() =
+      let expected = emptyGraphWithPenColorNamed
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PenColor = GraphColor.SingleColor(Color.PeachPuff))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pencolor attribute to a non default value using an ARGB value``() =
+      let expected = emptyGraphWithPenColorArgb
+      let color = GraphColor.SingleColor(Color.FromArgb(1, 2, 3, 4))
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PenColor = color)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pencolor attribute to a color list value``() =
+      let expected = emptyGraphWithPenColorList
+      let color1 = { WColor = Color.PeachPuff; Weight = Some 0.4 }
+      let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = Some 0.6 }
+      let colors = 
+         WeightedColorList()
+            .Add(color1)
+            .Add(color2)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PenColor = GraphColor.ColorList(colors))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the pencolor attribute to a color list value without weightings``() =
+      let expected = emptyGraphWithPenColorListNoWeighting
+      let color1 = { WColor = Color.PeachPuff; Weight = None }
+      let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = None }
+      let colors = 
+         WeightedColorList()
+            .Add(color1)
+            .Add(color2)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PenColor = GraphColor.ColorList(colors))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the quadtree attribute to the default``() =
+      let expected = emptyGraphWithQuadtreeNormal
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Quadtree = Quadtree.Normal)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the quadtree attribute to Fast``() =
+      let expected = emptyGraphWithQuadtreeFast
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Quadtree = Quadtree.Fast)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the quadtree attribute to None``() =
+      let expected = emptyGraphWithQuadtreeNone
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Quadtree = Quadtree.None_)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+
+   [<Test>]
+   member __.``We can set the quantum attribute to a non default value``() =
+      let expected = emptyGraphWithQuantum
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Quantum = 1.23)
+      let actual = sut.ToString()
+      actual |> should equal expected
+

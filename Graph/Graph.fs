@@ -170,6 +170,11 @@ type WeightedColorList() =
          |> Array.ofList
       String.Join(":", items)
 
+type FontColor(color : Color) =
+    member __.Color = color
+    override __.ToString() =
+        color |> colorToString
+
 type GraphColor =
 | SingleColor of Color
 | ColorList of WeightedColorList
@@ -183,6 +188,8 @@ type Dimension(n : int) =
       if n < 2 || n > 10 then
          raise (ArgumentOutOfRangeException("Dimension value must be between 2 and 10 inclusive"))
    member __.N = n
+   override this.ToString() =
+      n.ToString()
 
 type DirEdgeConstraints =
 | False
@@ -263,11 +270,15 @@ type Layer(name : string, selected : bool) =
    member val Name = name with get
    member val Selected = selected with get
 
-type Layers(layers : Layer[]) =
+type Layers(layers : Layer[], layerSep : string) =
+   static member DefaultLayerSep = ":"
    member __.Layers = layers
-   member __.ToString(sep) =
+   member val LayerSep = layerSep with get, set
+   new (layers : Layer[]) =
+      Layers(layers, Layers.DefaultLayerSep)
+   override __.ToString() =
       let names = layers |> Array.map (fun layer -> layer.Name)
-      String.Join(sep, names)
+      String.Join(layerSep, names)
    member this.AllSelected =
       this.Layers 
       |> Array.exists (fun l -> l.Selected |> not) 
@@ -463,6 +474,15 @@ type PageDir =
          |> Array.ofSeq
       String(chars)
 
+type Quadtree =
+| Normal
+| Fast
+| None_ 
+   override this.ToString() =
+      match this with
+      | Normal | Fast -> (getUnionCaseName this).ToLowerInvariant()
+      | None_ -> "none"
+
 type Graph
    (
       id : Id, 
@@ -495,7 +515,7 @@ type Graph
    let defaultDpi = 96
    let defaultEpsilon : float option = None
    let defaultESep : Separation option = None
-   let defaultFontColor = Color.Black
+   let defaultFontColor = FontColor(Color.Black)
    let defaultFontName = "Times-Roman"
    let defaultFontNames = FontNames.Undefined
    let defaultFontPath = ""
@@ -512,7 +532,6 @@ type Graph
    let defaultRotation = 0
    let defaultLayerListSep = ","
    let defaultLayers = Layers([||])
-   let defaultLayerSep = ":"
    let defaultLayout = ""
    let defaultLevels = Int32.MaxValue
    let defaultLevelsGap = 0.0
@@ -533,6 +552,7 @@ type Graph
    let defaultNsLimit = 0.0
    let defaultNsLimit1 = 0.0
    let defaultOrdering : Ordering option = None
+   // TODO Orientation for graph is a string
    let defaultOrientation = 0.0
    let defaultOutputOrder = OutputOrder.BreadthFirst
    let defaultOverlap : Overlap option = None
@@ -544,6 +564,9 @@ type Graph
    let defaultPad = Pad(0.0555)
    let defaultPage : Page option = None
    let defaultPageDir = PageDir.BottomLeft
+   let defaultPenColor = GraphColor.SingleColor(Color.Black)
+   let defaultQuadtree = Quadtree.Normal
+   let defaultQuantum = 0.0
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -601,7 +624,7 @@ type Graph
          else if this.Rotation = 90 then this.Rotation <- 0
    member val LayerListSep = defaultLayerListSep with get, set
    member val Layers = defaultLayers with get, set
-   member val LayerSep = defaultLayerSep with get, set
+   //member this.LayerSep with get() = this.Layers.LayerSep and set(value) = this.Layers.LayerSep <- value
    member val Layout = defaultLayout with get, set
    member val Levels = defaultLevels with get, set
    member val LevelsGap = defaultLevelsGap with get, set
@@ -636,162 +659,99 @@ type Graph
    member val Pad = defaultPad with get, set
    member val Page = defaultPage with get, set
    member val PageDir = defaultPageDir with get, set
+   member val PenColor = defaultPenColor with get, set
+   member val Quadtree = defaultQuadtree with get, set
+   member val Quantum = defaultQuantum with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
+      let addIf v dv name =
+         if v <> dv then
+            dict.[name] <- v.ToString()
+      let addIfS v name =
+         match v with
+         | Some x -> dict.[name] <- x.ToString()
+         | _ -> ()
+      let addIfB v dv name =
+         if v <> dv then
+            dict.[name] <- v.ToString().ToLowerInvariant()
       // TODO could consider putting an attribute on the relevant members
       // and iterating over them using reflection
-      if this.Damping <> defaultDamping then
-         dict.["Damping"] <- this.Damping.ToString()
-      if this.K <> defaultK then
-         dict.["K"] <- this.K.ToString()
-      if this.Url <> defaultUrl then
-         dict.["URL"] <- this.Url
-      if this.Background <> defaultBackground then
-         dict.["_background"] <- this.Background
-      match this.Bb with
-      | Some r -> dict.["bb"] <- r.ToString()
-      | _ -> ()
-      match this.BgColor with
-      | Some c -> 
-         dict.["bgcolor"] <- c.ToString()
-      | _ -> ()
-      if this.Center <> defaultCenter then
-         dict.["center"] <- this.Center.ToString().ToLowerInvariant()
-      if this.Charset <> defaultCharSet then
-         dict.["charset"] <- this.Charset
-      if this.ClusterRank <> defaultClusterRank then
-         dict.["clusterrank"] <- this.ClusterRank
-      if this.Color <> defaultColor then
-         dict.["color"] <- this.Color.ToString()
-      if this.ColorScheme <> defaultColorScheme then
-         dict.["colorscheme"] <- this.ColorScheme
-      if this.Comment <> defaultComment then
-         dict.["comment"] <- this.Comment
-      if this.Compound <> defaultCompound then
-         dict.["compound"] <- this.Compound.ToString().ToLowerInvariant()
-      if this.Concentrate <> defaultConcentrate then
-         dict.["concentrate"] <- this.Concentrate.ToString().ToLowerInvariant()
-      match this.DefaultDistance with
-      | Some d -> 
-         dict.["defaultdist"] <- sprintf "%g" d
-      | None -> ()
-      if this.Dim <> defaultDim then
-         dict.["dim"] <- this.Dim.N.ToString()
-      if this.Dimen <> defaultDimen then
-         dict.["dimen"] <- this.Dimen.N.ToString()
-      if this.DirEdgeConstraints <> defaultDirEdgeConstraints then
-         dict.["diredgeconstraints"] <- this.DirEdgeConstraints.ToString()
-      if this.Dpi <> defaultDpi then
-         dict.["dpi"] <- this.Dpi.ToString()
-      match this.Epsilon with
-      | Some e -> dict.["epsilon"] <- sprintf "%g" e
-      | None -> ()
-      match this.ESep with
-      | Some es -> dict.["esep"] <- es.ToString()
-      | None -> ()
-      if this.FontColor <> defaultFontColor then
-         dict.["fontcolor"] <- this.FontColor |> colorToString
-      if this.FontName <> defaultFontName then
-         dict.["fontname"] <- this.FontName
-      if this.FontNames <> defaultFontNames then
-         dict.["fontnames"] <- this.FontNames.ToString()
-      if this.FontPath <> defaultFontPath then
-         dict.["fontpath"] <- this.FontPath
-      if this.FontSize <> defaultFontSize then
-         dict.["fontsize"] <- this.FontSize.ToString()
-      if this.ForceLabels <> defaultForceLabels then
-         dict.["forcelabels"] <- this.ForceLabels.ToString().ToLowerInvariant()
-      if this.GradientAngle <> defaultGradientAngle then
-         dict.["gradientangle"] <- this.GradientAngle.ToString()
-      if this.IdAttribute <> defaultIdAttribute then
-         dict.["id"] <- this.IdAttribute
-      if this.ImagePath <> defaultImagePath then
-         dict.["imagepath"] <- this.ImagePath.ToString()
-      if this.InputScale <> defaultInputScale then
-         dict.["inputscale"] <- sprintf "%g" this.InputScale
-      if this.Label <> defaultLabel then
-         dict.["label"] <- this.Label
-      if this.LabelScheme <> defaultLabelScheme then
-         dict.["labelscheme"] <- this.LabelScheme.ToString()
-      if this.LabelJust <> defaultLabelJust then
-         dict.["labeljust"] <- this.LabelJust.ToString()
-      match this.LabelLoc with
-      | Some loc -> dict.["labelloc"] <- loc.ToString()
-      | None -> ()
-      if this.Rotation <> defaultRotation then
-         dict.["rotation"] <- this.Rotation.ToString()
-      if this.LayerListSep <> defaultLayerListSep then
-         dict.["layerlistsep"] <- this.LayerListSep
-      if this.Layers <> defaultLayers then
-         dict.["layers"] <- this.Layers.ToString(this.LayerSep)
-      if this.LayerSep <> defaultLayerSep then
-         dict.["layersep"] <- this.LayerSep
+      addIf this.Damping defaultDamping "Damping"
+      addIf this.K defaultK "K"
+      addIf this.Url defaultUrl "URL"
+      addIf this.Background defaultBackground "_background"
+      addIfS this.Bb "bb"
+      addIfS this.BgColor "bgcolor"
+      addIfB this.Center defaultCenter "center"
+      addIf this.Charset defaultCharSet "charset"
+      addIf this.ClusterRank defaultClusterRank "clusterrank"
+      addIf this.Color defaultColor "color"
+      addIf this.ColorScheme defaultColorScheme "colorscheme"
+      addIf this.Comment defaultComment "comment"
+      addIfB this.Compound defaultCompound "compound"
+      addIfB this.Concentrate defaultConcentrate "concentrate"
+      addIfS this.DefaultDistance "defaultdist"
+      addIf this.Dim defaultDim "dim"
+      addIf this.Dimen defaultDimen "dimen"
+      addIf this.DirEdgeConstraints defaultDirEdgeConstraints "diredgeconstraints"
+      addIf this.Dpi defaultDpi "dpi"
+      addIfS this.Epsilon "epsilon"
+      addIfS this.ESep "esep"
+      addIf this.FontColor defaultFontColor "fontcolor"
+      addIf this.FontName defaultFontName "fontname"
+      addIf this.FontNames defaultFontNames "fontnames"
+      addIf this.FontPath defaultFontPath "fontpath"
+      addIf this.FontSize defaultFontSize "fontsize"
+      addIfB this.ForceLabels defaultForceLabels "forcelabels"
+      addIf this.GradientAngle defaultGradientAngle "gradientangle"
+      addIf this.IdAttribute defaultIdAttribute "id"
+      addIf this.ImagePath defaultImagePath "imagepath"
+      addIf this.InputScale defaultInputScale "inputscale"
+      addIf this.Label defaultLabel "label"
+      addIf this.LabelScheme defaultLabelScheme "labelscheme"
+      addIf this.LabelJust defaultLabelJust "labeljust"
+      addIfS this.LabelLoc "labelloc"
+      addIf this.Rotation defaultRotation "rotation"
+      addIf this.LayerListSep defaultLayerListSep "layerlistsep"
+      addIf this.Layers defaultLayers "layers"
+      addIf this.Layers.LayerSep Layers.DefaultLayerSep "layersep"
       if this.Layers.AllSelected |> not then
          dict.["layerselect"] <- this.Layers.LayerSelect(this.LayerListSep)
-      if this.Layout <> defaultLayout then
-         dict.["layout"] <- this.Layout
-      if this.Levels <> defaultLevels then
-         dict.["levels"] <- this.Levels.ToString()
-      if this.LevelsGap <> defaultLevelsGap then
-         dict.["levelsgap"] <- sprintf "%g" this.LevelsGap
-      if this.LHeight <> defaultLHeight then
-         dict.["lheight"] <- sprintf "%g" this.LHeight
-      match this.Lp with
-      | Some(lp) -> dict.["lp"] <- lp.ToString()
-      | None -> ()
-      if this.LWidth <> defaultLWidth then
-         dict.["lwidth"] <- sprintf "%g" this.LWidth
-      if this.Margin <> defaultMargin then
-         dict.["margin"] <- this.Margin.ToString()
-      if this.MaxIter <> defaultMaxIter then
-         dict.["maxiter"] <- this.MaxIter.ToString()
-      if this.McLimit <> defaultMcLimit then
-         dict.["mclimit"] <- sprintf "%g" this.McLimit
-      if this.MinDist <> defaultMinDist then
-         dict.["mindist"] <- sprintf "%g" this.MinDist
-      if this.Mode <> defaultMode then
-         dict.["mode"] <- this.Mode.ToString()
-      if this.Model <> defaultModel then
-         dict.["model"] <- this.Model.ToString()
-      if this.Mosek <> defaultMosek then
-         dict.["mosek"] <- this.Mosek.ToString().ToLowerInvariant()
-      if this.NodeSep <> defaultNodeSep then
-         dict.["nodesep"] <- this.NodeSep.ToString()
-      if this.NoJustify <> defaultNoJustify then
-         dict.["nojustify"] <- this.NoJustify.ToString().ToLowerInvariant()
-      if this.Normalize <> defaultNormalize then
-         dict.["normalize"] <- this.Normalize.ToString()
-      if this.NoTranslate <> defaultNoTranslate then
-         dict.["notranslate"] <- this.NoTranslate.ToString().ToLowerInvariant()
-      if this.NsLimit <> defaultNsLimit then
-         dict.["nslimit"] <- sprintf "%g" this.NsLimit
-      if this.NsLimit1 <> defaultNsLimit1 then
-         dict.["nslimit1"] <- sprintf "%g" this.NsLimit1
-      match this.Ordering with
-      | Some o -> dict.["ordering"] <- o.ToString()
-      | None -> ()
-      if this.Orientation <> defaultOrientation then
-         dict.["orientation"] <- sprintf "%g" this.Orientation
-      if this.OutputOrder <> defaultOutputOrder then
-         dict.["outputorder"] <- this.OutputOrder.ToString()
+      addIf this.Layout defaultLayout "layout"
+      addIf this.Levels defaultLevels "levels"
+      addIf this.LevelsGap defaultLevelsGap "levelsgap"
+      addIf this.LHeight defaultLHeight "lheight"
+      addIfS this.Lp "lp"
+      addIf this.LWidth defaultLWidth "lwidth"
+      addIf this.Margin defaultMargin "margin"
+      addIf this.MaxIter defaultMaxIter "maxiter"
+      addIf this.McLimit defaultMcLimit "mclimit"
+      addIf this.MinDist defaultMinDist "mindist"
+      addIf this.Mode defaultMode "mode"
+      addIf this.Model defaultModel "model"
+      addIfB this.Mosek defaultMosek "mosek"
+      addIf this.NodeSep defaultNodeSep "nodesep"
+      addIfB this.NoJustify defaultNoJustify "nojustify"
+      addIf this.Normalize defaultNormalize "normalize"
+      addIfB this.NoTranslate defaultNoTranslate "notranslate"
+      addIf this.NsLimit defaultNsLimit "nslimit"
+      addIf this.NsLimit1 defaultNsLimit1 "nslimit1"
+      addIfS this.Ordering "ordering"
+      addIf this.Orientation defaultOrientation "orientation"
+      addIf this.OutputOrder defaultOutputOrder "outputorder"
       match this.Overlap with
       | Some o -> dict.["overlap"] <- o.ToString(this.OverlapPrefix)
       | None -> ()
-      if this.OverlapScaling <> defaultOverlapScaling then
-         dict.["overlap_scaling"] <- sprintf "%g" this.OverlapScaling
-      if this.OverlapShrink <> defaultOverlapShrink then
-         dict.["overlap_shrink"] <- this.Center.ToString().ToLowerInvariant()
-      if this.Pack <> defaultPack then
-         dict.["pack"] <- this.Pack.ToString()
-      if this.PackMode <> defaultPackMode then
-         dict.["packmode"] <- this.PackMode.ToString()
-      if this.Pad <> defaultPad then
-         dict.["pad"] <- this.Pad.ToString()
-      match this.Page with
-      | Some p -> dict.["page"] <- p.ToString()
-      | None -> ()
-      if this.PageDir <> defaultPageDir then
-         dict.["pagedir"] <- this.PageDir.ToString()
+      addIf this.OverlapScaling defaultOverlapScaling "overlap_scaling"
+      addIfB this.OverlapShrink defaultOverlapShrink "overlap_shrink"
+      addIf this.Pack defaultPack "pack"
+      addIf this.PackMode defaultPackMode "packmode"
+      addIf this.Pad defaultPad "pad"
+      addIfS this.Page "page"
+      addIf this.PageDir defaultPageDir "pagedir"
+      addIf this.PenColor defaultPenColor "pencolor"
+      addIf this.Quadtree defaultQuadtree "quadtree"
+      addIf this.Quantum defaultQuantum "quantum"
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

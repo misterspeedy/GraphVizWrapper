@@ -299,15 +299,14 @@ type GraphPoint(x : float, y : float) =
    override __.ToString() =
       sprintf "%g,%g" x y
 
-type Margin(size : GraphPoint) =
-   member __.Size = size
-   new (singleSize : float) =
-      Margin(GraphPoint(singleSize, singleSize))
+type Margin(x : float, y : float) =
+   new (n : float) =
+      Margin(n, n)
    override __.ToString() =
-      if size.X = size.Y then
-         sprintf "%g" size.X 
+      if x = y then
+         sprintf "%g" x
       else
-         size.ToString()
+         sprintf "%g,%g" x y
 
 type Mode =
 | Major
@@ -437,26 +436,23 @@ type PackMode =
          if flags.Length > 0 then sprintf "array_%s" flags else "array"
       | _ -> (getUnionCaseName this).ToLowerInvariant()
 
-// TODO on this and margin and page, consider having the primary constructor take the two args
-type Pad(size : GraphPoint) =
-   member __.Size = size
-   new (singleSize : float) =
-      Pad(GraphPoint(singleSize, singleSize))
+type Pad(x : float, y : float) =
+   new (n : float) =
+      Pad(n, n)
    override __.ToString() =
-      if size.X = size.Y then
-         sprintf "%g" size.X 
+      if x = y then
+         sprintf "%g" x
       else
-         size.ToString()
+         sprintf "%g,%g" x y
 
-type Page(size : GraphPoint) =
-   member __.Size = size
-   new (singleSize : float) =
-      Page(GraphPoint(singleSize, singleSize))
+type Page(x : float, y : float) =
+   new (n : float) =
+      Page(n, n)
    override __.ToString() =
-      if size.X = size.Y then
-         sprintf "%g" size.X 
+      if x = y then
+         sprintf "%g" x
       else
-         size.ToString()
+         sprintf "%g,%g" x y
 
 type PageDir =
 | BottomLeft
@@ -525,6 +521,19 @@ type Ratio =
         match this with
         | Numeric f -> f.ToString()
         | _ -> (getUnionCaseName this).ToLowerInvariant()
+
+type Rotate =
+| Portrait
+| Landscape
+
+type Scale(x : float, y : float) =
+   new (n : float) =
+      Scale(n, n)
+   override __.ToString() =
+      if x = y then
+         sprintf "%g" x
+      else
+         sprintf "%g,%g" x y
 
 type Graph
    (
@@ -616,6 +625,7 @@ type Graph
    let defaultReMinCross = true
    let defaultRepulsiveForce = 1.0
    let defaultRoot = ""
+   let defaultScale : Scale option = None
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -720,6 +730,17 @@ type Graph
       with get() = this.Dpi
       and set(value) = this.Dpi <- value
    member val Root = defaultRoot with get, set
+   member this.Rotate 
+      with get() = 
+         if this.Landscape then 
+            Rotate.Landscape
+         else
+            Rotate.Portrait
+      and set(value) =
+         match value with
+         | Portrait -> this.Landscape <- false
+         | Landscape -> this.Landscape <- true
+   member val Scale = defaultScale with get, set      
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       let addIf v dv name =
@@ -816,6 +837,7 @@ type Graph
       addIfB this.ReMinCross defaultReMinCross "remincross"
       addIf this.RepulsiveForce defaultRepulsiveForce "repulsiveforce"
       addIf this.Root defaultRoot "root"
+      addIfS this.Scale "scale"
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

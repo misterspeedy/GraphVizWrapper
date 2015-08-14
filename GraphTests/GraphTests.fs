@@ -882,6 +882,23 @@ module __ =
       {\r\n\
       \x20\x20[ root = \"node99\" ]\
       }"
+   // Rotate.Landscape (90) is a synonym for Rotation = 90
+   let emptyGraphWithRotate = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ rotation = 90 ]\
+      }"
+   let emptyGraphWithScaleN = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ scale = 1.2 ]\
+      }"
+   let emptyGraphWithScaleXY = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ scale = \"1.2,3.4\" ]\
+      }"
+
 
 [<TestFixture>]
 type GraphTests() =
@@ -1469,7 +1486,7 @@ type GraphTests() =
    [<Test>]
    member __.``We can set the margin attribute to an x,y non default value``() =
       let expected = emptyGraphWithXYMargin 
-      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Margin = Margin(GraphPoint(7.8, 9.1)))
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Margin = Margin(7.8, 9.1))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1980,7 +1997,7 @@ type GraphTests() =
    member __.``We can set the pad element to a pair of values``() =
       let expected = emptyGraphWithPadXY
       let sut = 
-         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Pad = Pad(GraphPoint(1.2, 3.4)))
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Pad = Pad(1.2, 3.4))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1996,7 +2013,7 @@ type GraphTests() =
    member __.``We can set the page element to a pair of values``() =
       let expected = emptyGraphWithPageXY
       let sut = 
-         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Page = (Page(GraphPoint(4.5, 6.7)) |> Some))
+         Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Page = (Page(4.5, 6.7) |> Some))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -2246,5 +2263,24 @@ type GraphTests() =
       let actual = sut.ToString()
       actual |> should equal expected
 
+   [<Test>]
+   member __.``We can set the rotate attribute to 90``() =
+      let expected = emptyGraphWithRotate
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Rotate=Rotate.Landscape)
+      let actual = sut.ToString()
+      actual |> should equal expected
 
+   [<Test>]
+   member __.``We can set the scale attribute a single value``() =
+      let expected = emptyGraphWithScaleN
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Scale = Some(Scale(1.2)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the scale attribute a pair of values``() =
+      let expected = emptyGraphWithScaleXY
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Scale = Some(Scale(1.2,3.4)))
+      let actual = sut.ToString()
+      actual |> should equal expected
 

@@ -151,6 +151,7 @@ type WeightedColor =
             (this.WColor |> colorToString) 
             (match this.Weight with | Some w -> sprintf ";%g" w | None -> "")
 
+// TODO allow init with constructor parameter (array)
 type WeightedColorList() =
    let mutable list : WeightedColor list = []
    let totalWeight items =
@@ -497,14 +498,33 @@ type RankDir =
          |> Array.ofSeq
       String(chars)
 
-type DoubleList(list : double list) =
+type DoubleList(list : double[]) =
    override __.ToString() =
       let items = 
          list
-         |> List.rev
-         |> List.map (fun wc -> wc.ToString())
-         |> Array.ofList
+         |> Array.map (fun wc -> wc.ToString())
       String.Join(":", items)
+
+type RankSep =
+| Single of float
+| List of DoubleList
+| Equally of float
+    override this.ToString() =
+        match this with
+        | Single f -> f.ToString()
+        | List l -> l.ToString()
+        | Equally f -> sprintf "%g equally" f
+
+type Ratio =
+| Numeric of float
+| Fill
+| Compress
+| Expand
+| Auto
+    override this.ToString() =
+        match this with
+        | Numeric f -> f.ToString()
+        | _ -> (getUnionCaseName this).ToLowerInvariant()
 
 type Graph
    (
@@ -535,7 +555,7 @@ type Graph
    let defaultDim = Dimension(2)
    let defaultDimen = Dimension(2)
    let defaultDirEdgeConstraints = DirEdgeConstraints.False
-   let defaultDpi = 96
+   let defaultDpi = 96.
    let defaultEpsilon : float option = None
    let defaultESep : Separation option = None
    let defaultFontColor = FontColor(Color.Black)
@@ -591,7 +611,11 @@ type Graph
    let defaultQuadtree = Quadtree.Normal
    let defaultQuantum = 0.0
    let defaultRankDir = RankDir.TopBottom
-   let defaultRankSep : DoubleList option = None
+   let defaultRankSep : RankSep option = None
+   let defaultRatio : Ratio option = None
+   let defaultReMinCross = true
+   let defaultRepulsiveForce = 1.0
+   let defaultRoot = ""
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -689,6 +713,13 @@ type Graph
    member val Quantum = defaultQuantum with get, set
    member val RankDir = defaultRankDir with get, set
    member val RankSep = defaultRankSep with get, set
+   member val Ratio = defaultRatio with get, set
+   member val ReMinCross = defaultReMinCross with get, set
+   member val RepulsiveForce = defaultRepulsiveForce with get, set
+   member this.Resolution
+      with get() = this.Dpi
+      and set(value) = this.Dpi <- value
+   member val Root = defaultRoot with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       let addIf v dv name =
@@ -780,7 +811,11 @@ type Graph
       addIf this.Quadtree defaultQuadtree "quadtree"
       addIf this.Quantum defaultQuantum "quantum"
       addIf this.RankDir defaultRankDir "rankdir"
-      addIf this.RankSep defaultRankSep "ranksep"
+      addIfS this.RankSep "ranksep"
+      addIfS this.Ratio "ratio"
+      addIfB this.ReMinCross defaultReMinCross "remincross"
+      addIf this.RepulsiveForce defaultRepulsiveForce "repulsiveforce"
+      addIf this.Root defaultRoot "root"
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

@@ -175,7 +175,7 @@ module __ =
    let emptyGraphWithDpi = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ dpi = 300 ]\
+      \x20\x20[ dpi = 123.4 ]\
       }"
    let emptyGraphWithEpsilon = 
       "graph \"id\"\r\n\
@@ -636,20 +636,6 @@ module __ =
       {\r\n\
       \x20\x20[ pack = 12 ]\
       }"
-   let emptyGraphWithRankSepOne = 
-      "graph \"id\"\r\n\
-      {\r\n\
-      \x20\x20[ ranksep = 1.2 ]\
-      }"
-   let emptyGraphWithRankSepSeveral = 
-      "graph \"id\"\r\n\
-      {\r\n\
-      \x20\x20[ ranksep = \"1.2:3.4:5.6\"]\
-      }"
-   // TODO implement 'equally' syntax for ranksep
-   // ? implement differences for the different graph types
-    
-
    // This is the default
    let emptyGraphWithPackModeNode = 
       "graph \"id\"\r\n\
@@ -834,6 +820,67 @@ module __ =
       "graph \"id\"\r\n\
       {\r\n\
       \x20\x20[ rankdir = \"RL\" ]\
+      }"
+   let emptyGraphWithRankSepOne = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ranksep = 1.2 ]\
+      }"
+   let emptyGraphWithRankSepSeveral = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ranksep = \"1.2:3.4:5.6\" ]\
+      }"
+   let emptyGraphWithRankSepOneEqually = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ranksep = \"1.2 equally\" ]\
+      }"
+   let emptyGraphWithRatioN = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ratio = 1.2 ]\
+      }"
+   let emptyGraphWithRatioFill = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ratio = \"fill\" ]\
+      }"
+   let emptyGraphWithRatioCompress = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ratio = \"compress\" ]\
+      }"
+   let emptyGraphWithRatioExpand = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ratio = \"expand\" ]\
+      }"
+   let emptyGraphWithRatioAuto = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ ratio = \"auto\" ]\
+      }"
+   let emptyGraphWithReMinCross = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ remincross = false ]\
+      }"
+   let emptyGraphWithRepulsiveForce = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ repulsiveforce = 1.9 ]\
+      }"
+   // Resolution is a synonym for DPI
+   let emptyGraphWithResolution = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ dpi = 456.7 ]\
+      }"
+   let emptyGraphWithRoot = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ root = \"node99\" ]\
       }"
 
 [<TestFixture>]
@@ -1114,7 +1161,7 @@ type GraphTests() =
    [<Test>]
    member __.``We can set the dpi attribute to a non default value``() =
       let expected = emptyGraphWithDpi
-      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Dpi = 300)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Dpi = 123.4)
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -2114,4 +2161,90 @@ type GraphTests() =
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, RankDir = RankDir.RightLeft)
       let actual = sut.ToString()
       actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the rankSep attribute to a single value``() =
+      let expected = emptyGraphWithRankSepOne
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, RankSep = Some(RankSep.Single(1.2)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the rankSep attribute to a list of values``() =
+      let expected = emptyGraphWithRankSepSeveral
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, RankSep = Some(RankSep.List(DoubleList([|1.2;3.4;5.6|]))))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the rankSep attribute to a value using 'equally'``() =
+      let expected = emptyGraphWithRankSepOneEqually
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, RankSep = Some(RankSep.Equally(1.2)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the ratio attribute to a numeric value``() =
+      let expected = emptyGraphWithRatioN
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Ratio = Some(Ratio.Numeric(1.2)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the ratio attribute to a value of 'fill'``() =
+      let expected = emptyGraphWithRatioFill
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Ratio = Some(Ratio.Fill))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the ratio attribute to a value of 'compress'``() =
+      let expected = emptyGraphWithRatioCompress
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Ratio = Some(Ratio.Compress))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the ratio attribute to a value of 'expand'``() =
+      let expected = emptyGraphWithRatioExpand
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Ratio = Some(Ratio.Expand))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the ratio attribute to a value of 'auto'``() =
+      let expected = emptyGraphWithRatioAuto
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Ratio = Some(Ratio.Auto))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the remincross attribute a non default value``() =
+      let expected = emptyGraphWithReMinCross
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ReMinCross=false)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the repulsiveforce attribute a non default value``() =
+      let expected = emptyGraphWithRepulsiveForce
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, RepulsiveForce = 1.9)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the resolution attribute a non default value``() =
+      let expected = emptyGraphWithResolution
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Resolution = 456.7)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the root attribute a non default value``() =
+      let expected = emptyGraphWithRoot
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Root = "node99")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+
 

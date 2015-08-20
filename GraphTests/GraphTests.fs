@@ -898,7 +898,41 @@ module __ =
       {\r\n\
       \x20\x20[ scale = \"1.2,3.4\" ]\
       }"
-
+   let emptyGraphWithSearchSize = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ searchsize = 35 ]\
+      }"
+   let emptyGraphWithSepN = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ sep = 10 ]\
+      }"
+   let emptyGraphWithSepXY = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ sep = \"10,12\" ]\
+      }"
+   let emptyGraphWithSepPlusN = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ sep = +10 ]\
+      }"
+   let emptyGraphWithSepPlusXY = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ sep = \"+10,12\" ]\
+      }"
+   let emptyGraphWithShowBoxesBeginning = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ showboxes = 1 ]\
+      }"
+   let emptyGraphWithShowBoxesEnd = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ showboxes = 2 ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -1042,10 +1076,7 @@ type GraphTests() =
       let expected = emptyGraphWithBgColorList
       let color1 = { WColor = Color.PeachPuff; Weight = Some 0.4 }
       let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = Some 0.6 }
-      let colors = 
-         WeightedColorList()
-            .Add(color1)
-            .Add(color2)
+      let colors = WeightedColorList([color1; color2])
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, BgColor = Some(GraphColor.ColorList(colors)))
       let actual = sut.ToString()
       actual |> should equal expected
@@ -1055,10 +1086,7 @@ type GraphTests() =
       let expected = emptyGraphWithBgColorListNoWeighting
       let color1 = { WColor = Color.PeachPuff; Weight = None }
       let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = None }
-      let colors = 
-         WeightedColorList()
-            .Add(color1)
-            .Add(color2)
+      let colors = WeightedColorList([color1; color2])
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, BgColor = Some(GraphColor.ColorList(colors)))
       let actual = sut.ToString()
       actual |> should equal expected
@@ -1104,10 +1132,7 @@ type GraphTests() =
       let expected = emptyGraphWithColorList
       let color1 = { WColor = Color.PeachPuff; Weight = Some 0.4 }
       let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = Some 0.6 }
-      let colors = 
-         WeightedColorList()
-            .Add(color1)
-            .Add(color2)
+      let colors = WeightedColorList([color1; color2])
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Color = GraphColor.ColorList(colors))
       let actual = sut.ToString()
       actual |> should equal expected
@@ -2101,10 +2126,7 @@ type GraphTests() =
       let expected = emptyGraphWithPenColorList
       let color1 = { WColor = Color.PeachPuff; Weight = Some 0.4 }
       let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = Some 0.6 }
-      let colors = 
-         WeightedColorList()
-            .Add(color1)
-            .Add(color2)
+      let colors = WeightedColorList([color1; color2])
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PenColor = GraphColor.ColorList(colors))
       let actual = sut.ToString()
       actual |> should equal expected
@@ -2114,10 +2136,7 @@ type GraphTests() =
       let expected = emptyGraphWithPenColorListNoWeighting
       let color1 = { WColor = Color.PeachPuff; Weight = None }
       let color2 = { WColor = Color.FromArgb(1, 2, 3, 4); Weight = None }
-      let colors = 
-         WeightedColorList()
-            .Add(color1)
-            .Add(color2)
+      let colors = WeightedColorList([color1; color2])
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, PenColor = GraphColor.ColorList(colors))
       let actual = sut.ToString()
       actual |> should equal expected
@@ -2271,16 +2290,64 @@ type GraphTests() =
       actual |> should equal expected
 
    [<Test>]
-   member __.``We can set the scale attribute a single value``() =
+   member __.``We can set the scale attribute to a single value``() =
       let expected = emptyGraphWithScaleN
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Scale = Some(Scale(1.2)))
       let actual = sut.ToString()
       actual |> should equal expected
 
    [<Test>]
-   member __.``We can set the scale attribute a pair of values``() =
+   member __.``We can set the scale attribute to a pair of values``() =
       let expected = emptyGraphWithScaleXY
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Scale = Some(Scale(1.2,3.4)))
       let actual = sut.ToString()
       actual |> should equal expected
 
+   [<Test>]
+   member __.``We can set the searchsize attribute to a non default value``() =
+      let expected = emptyGraphWithSearchSize
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, SearchSize = 35)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the sep attribute to a single value``() =
+      let expected = emptyGraphWithSepN
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Sep = Sep.SepScale(10.))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the sep attribute to a pair of values``() =
+      let expected = emptyGraphWithSepXY
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Sep = Sep.SepScaleHW(10.,12.))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the sep attribute to a single 'plus' value``() =
+      let expected = emptyGraphWithSepPlusN
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Sep = Sep.SepAdd(10.))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the sep attribute to a pair of 'plus' values``() =
+      let expected = emptyGraphWithSepPlusXY
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Sep = Sep.SepAddHW(10.,12.))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the showboxes attribute to a value of 'beginning'``() =
+      let expected = emptyGraphWithShowBoxesBeginning
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ShowBoxes = ShowBoxes.Beginning)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the showboxes attribute to a value of 'end'``() =
+      let expected = emptyGraphWithShowBoxesEnd
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ShowBoxes = ShowBoxes.End)
+      let actual = sut.ToString()
+      actual |> should equal expected

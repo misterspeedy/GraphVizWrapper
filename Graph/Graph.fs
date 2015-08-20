@@ -151,22 +151,24 @@ type WeightedColor =
             (this.WColor |> colorToString) 
             (match this.Weight with | Some w -> sprintf ";%g" w | None -> "")
 
-// TODO allow init with constructor parameter (array)
-type WeightedColorList() =
-   let mutable list : WeightedColor list = []
+type WeightedColorList(colors : WeightedColor list) =
    let totalWeight items =
       items |> List.sumBy (fun wc -> match wc.Weight with | Some w -> w | _ -> 0.)
-   member this.Add(weightedColor : WeightedColor) =
-      let newList = weightedColor :: list
-      if newList |> totalWeight <= 1.0 then
-         list <- newList
-         this
-      else
+   let checkTotal clist = 
+      if clist |> totalWeight > 1.0 then
          raise (ArgumentException("Color weights cannot add up to more than 1.0"))
+   do checkTotal colors
+
+   let mutable list : WeightedColor list = colors
+
+   member this.Add(weightedColor : WeightedColor) =
+      let newList = weightedColor :: list |> List.rev
+      checkTotal newList 
+      list <- newList
+      this
    override __.ToString() =
       let items = 
          list
-         |> List.rev
          |> List.map (fun wc -> wc.ToString())
          |> Array.ofList
       String.Join(":", items)
@@ -534,6 +536,38 @@ type Scale(x : float, y : float) =
          sprintf "%g" x
       else
          sprintf "%g,%g" x y
+         
+type Sep =
+| SepAdd of float
+| SepAddHW of float * float
+| SepScale of float
+| SepScaleHW of float * float
+   override this.ToString() =
+      match this with
+      | SepAdd x -> 
+         sprintf "+%g" x
+      | SepAddHW (h,w) ->
+         if h = w then
+            Sep.SepAdd(h).ToString()
+         else
+            sprintf "+%g,%g" h w
+      | SepScale h ->
+         sprintf "%g" h
+      | SepScaleHW (h,w) ->
+         if h = w then
+            Sep.SepScale(h).ToString()
+         else
+            sprintf "%g,%g" h w
+
+type ShowBoxes =
+| Off
+| Beginning
+| End
+   override this.ToString() =
+      match this with
+      | Off -> "0"
+      | Beginning -> "1"
+      | End -> "2"  
 
 type Graph
    (
@@ -626,6 +660,9 @@ type Graph
    let defaultRepulsiveForce = 1.0
    let defaultRoot = ""
    let defaultScale : Scale option = None
+   let defaultSearchSize : int = 30
+   let defaultSep = Sep.SepAdd(4.)
+   let defaultShowBoxes = ShowBoxes.Off
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -740,7 +777,10 @@ type Graph
          match value with
          | Portrait -> this.Landscape <- false
          | Landscape -> this.Landscape <- true
-   member val Scale = defaultScale with get, set      
+   member val Scale = defaultScale with get, set     
+   member val SearchSize = defaultSearchSize with get, set 
+   member val Sep = defaultSep with get, set
+   member val ShowBoxes = defaultShowBoxes with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       let addIf v dv name =
@@ -838,6 +878,9 @@ type Graph
       addIf this.RepulsiveForce defaultRepulsiveForce "repulsiveforce"
       addIf this.Root defaultRoot "root"
       addIfS this.Scale "scale"
+      addIf this.SearchSize defaultSearchSize "searchsize"
+      addIf this.Sep defaultSep "sep"
+      addIf this.ShowBoxes defaultShowBoxes "showboxes"
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

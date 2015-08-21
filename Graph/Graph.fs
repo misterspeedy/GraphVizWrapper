@@ -582,6 +582,22 @@ type Size =
       | Desired n -> sprintf "%g!" n
       | DesiredHW(h, w) -> sprintf "%g,%g!" h w
 
+type Smoothing =
+| AverageDistance
+| GraphDistance
+| PowerDistance
+| Random
+| Spring
+| Triangle
+   override this.ToString() =
+      match this with
+      | AverageDistance -> "avg_dist"
+      | GraphDistance -> "graph_dist"
+      | PowerDistance -> "power_dist"
+      | Random -> "rng"
+      | Spring -> "spring"
+      | Triangle -> "triangle"
+
 type Graph
    (
       id : Id, 
@@ -677,6 +693,7 @@ type Graph
    let defaultSep = Sep.SepAdd(4.)
    let defaultShowBoxes = ShowBoxes.Off
    let defaultSize : Size option = None
+   let defaultSmoothing : Smoothing option = None
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -796,6 +813,7 @@ type Graph
    member val Sep = defaultSep with get, set
    member val ShowBoxes = defaultShowBoxes with get, set
    member val Size = defaultSize with get, set
+   member val Smoothing = defaultSmoothing with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       let addIf v dv name =
@@ -897,6 +915,7 @@ type Graph
       addIf this.Sep defaultSep "sep"
       addIf this.ShowBoxes defaultShowBoxes "showboxes"
       addIfS this.Size "size"
+      addIfS this.Smoothing "smoothing"
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

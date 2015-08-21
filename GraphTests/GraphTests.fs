@@ -953,6 +953,36 @@ module __ =
       {\r\n\
       \x20\x20[ size = \"2.1,3.4!\" ]\
       }"
+   let emptyGraphWithSmoothingAverageDistance = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ smoothing = \"avg_dist\" ]\
+      }"
+   let emptyGraphWithSmoothingGraphDistance = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ smoothing = \"graph_dist\" ]\
+      }"
+   let emptyGraphWithSmoothingPowerDistance = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ smoothing = \"power_dist\" ]\
+      }"
+   let emptyGraphWithSmoothingRandom = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ smoothing = \"rng\" ]\
+      }"
+   let emptyGraphWithSmoothingSpring = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ smoothing = \"spring\" ]\
+      }"
+  let emptyGraphWithSmoothingTriangle = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ smoothing = \"triangle\" ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -2399,3 +2429,46 @@ type GraphTests() =
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Size=Some(Size.DesiredHW(2.1,3.4)))
       let actual = sut.ToString()
       actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the smoothing attribute to a value of 'avg_dist'``() =
+      let expected = emptyGraphWithSmoothingAverageDistance
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Smoothing=Some(Smoothing.AverageDistance))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the smoothing attribute to a value of 'graph_dist'``() =
+      let expected = emptyGraphWithSmoothingGraphDistance
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Smoothing=Some(Smoothing.GraphDistance))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the smoothing attribute to a value of 'power_dist'``() =
+      let expected = emptyGraphWithSmoothingPowerDistance
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Smoothing=Some(Smoothing.PowerDistance))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the smoothing attribute to a value of 'rng'``() =
+      let expected = emptyGraphWithSmoothingRandom
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Smoothing=Some(Smoothing.Random))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the smoothing attribute to a value of 'spring'``() =
+      let expected = emptyGraphWithSmoothingSpring
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Smoothing=Some(Smoothing.Spring))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the smoothing attribute to a value of 'triangle'``() =
+      let expected = emptyGraphWithSmoothingTriangle
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Smoothing=Some(Smoothing.Triangle))
+      let actual = sut.ToString()
+      actual |> should equal expected
+

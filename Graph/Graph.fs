@@ -41,6 +41,13 @@ module __ =
       else
          ""
 
+   let initials s =
+      let chars =
+        s
+        |> Seq.filter (fun s -> s.ToString().ToUpperInvariant() = s.ToString())
+        |> Array.ofSeq
+      String(chars)
+
    let colorToString (c : Color) =
       if c.IsNamedColor then
          c.Name
@@ -466,12 +473,10 @@ type PageDir =
 | LeftBottom
 | LeftTop
    override this.ToString() =
-      let chars = 
-         this
-         |> getUnionCaseName
-         |> Seq.filter (fun s -> s.ToString().ToUpperInvariant() = s.ToString())
-         |> Array.ofSeq
-      String(chars)
+      this
+      |> getUnionCaseName
+      |> initials
+
 
 type Quadtree =
 | Normal
@@ -487,14 +492,10 @@ type RankDir =
 | LeftRight
 | BottomTop
 | RightLeft
-   // TODO eliminate repetition - get gaps function
    override this.ToString() =
-      let chars = 
-         this
-         |> getUnionCaseName
-         |> Seq.filter (fun s -> s.ToString().ToUpperInvariant() = s.ToString())
-         |> Array.ofSeq
-      String(chars)
+      this
+      |> getUnionCaseName
+      |> initials
 
 type DoubleList(list : double[]) =
    override __.ToString() =
@@ -568,6 +569,18 @@ type ShowBoxes =
       | Off -> "0"
       | Beginning -> "1"
       | End -> "2"  
+
+type Size =
+| Max of float
+| MaxHW of float * float
+| Desired of float
+| DesiredHW of float * float
+   override this.ToString() =
+      match this with
+      | Max n -> sprintf "%g" n
+      | MaxHW(h, w) -> sprintf "%g,%g" h w
+      | Desired n -> sprintf "%g!" n
+      | DesiredHW(h, w) -> sprintf "%g,%g!" h w
 
 type Graph
    (
@@ -663,6 +676,7 @@ type Graph
    let defaultSearchSize : int = 30
    let defaultSep = Sep.SepAdd(4.)
    let defaultShowBoxes = ShowBoxes.Off
+   let defaultSize : Size option = None
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -781,6 +795,7 @@ type Graph
    member val SearchSize = defaultSearchSize with get, set 
    member val Sep = defaultSep with get, set
    member val ShowBoxes = defaultShowBoxes with get, set
+   member val Size = defaultSize with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       let addIf v dv name =
@@ -881,6 +896,7 @@ type Graph
       addIf this.SearchSize defaultSearchSize "searchsize"
       addIf this.Sep defaultSep "sep"
       addIf this.ShowBoxes defaultShowBoxes "showboxes"
+      addIfS this.Size "size"
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

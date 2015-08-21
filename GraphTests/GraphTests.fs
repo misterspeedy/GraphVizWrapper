@@ -933,6 +933,26 @@ module __ =
       {\r\n\
       \x20\x20[ showboxes = 2 ]\
       }"
+   let emptyGraphWithSizeN = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ size = 2.1 ]\
+      }"
+   let emptyGraphWithSizeXY = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ size = \"2.1,3.4\" ]\
+      }"
+   let emptyGraphWithSizeNDesired = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ size = \"2.1!\" ]\
+      }"
+   let emptyGraphWithSizeXYDesired = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20[ size = \"2.1,3.4!\" ]\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -2349,5 +2369,33 @@ type GraphTests() =
    member __.``We can set the showboxes attribute to a value of 'end'``() =
       let expected = emptyGraphWithShowBoxesEnd
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ShowBoxes = ShowBoxes.End)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the size attribute to a single value``() =
+      let expected = emptyGraphWithSizeN
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Size=Some(Size.Max(2.1)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the size attribute to a pair of values``() =
+      let expected = emptyGraphWithSizeXY
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Size=Some(Size.MaxHW(2.1,3.4)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the size attribute to a single 'desired' value``() =
+      let expected = emptyGraphWithSizeNDesired
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Size=Some(Size.Desired(2.1)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the size attribute to a pair of 'desired' values``() =
+      let expected = emptyGraphWithSizeXYDesired
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Size=Some(Size.DesiredHW(2.1,3.4)))
       let actual = sut.ToString()
       actual |> should equal expected

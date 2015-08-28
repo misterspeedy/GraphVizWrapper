@@ -37,7 +37,7 @@ module __ =
          else
             [||]
       if pairs.Length > 0 then
-         sprintf "  [ %s ]" (String.Join("; ", pairs))
+         sprintf "  %s;\r\n" (String.Join(";\r\n  ", pairs))
       else
          ""
 
@@ -89,25 +89,30 @@ type Directionality =
       | Directed -> "->"
       | Undirected -> "--"
 
+type Label = string
+
 type Statement =
 | NodeStatement of GraphNode
-| EdgeStatement of GraphNode * GraphNode * Directionality
+| EdgeStatement of Label * GraphNode * GraphNode * Directionality
    override this.ToString() =
       match this with
       | NodeStatement n -> 
-         sprintf "\"%O\"" n.Id
-      | EdgeStatement(n1, n2, d) ->
-         sprintf "\"%O\" %O \"%O\"" n1 d n2
+         sprintf "\"%O\" [shape=box] " n.Id
+      // TODO unit test for labelling etc
+      | EdgeStatement(l, n1, n2, d) ->
+         sprintf "\"%O\" %O \"%O\" [label=\"%s\"; fontsize=12] " n1 d n2 l
 
 type Statements(statements : Statement list) =
    member __.Statements = statements
    member this.WithStatement(statement : Statement) =
-      Statements(statement::this.Statements |> List.rev)
+      // TODO this is inefficient!
+      let statements' = this.Statements @ [statement]
+      Statements(statements')
    override __.ToString() =
       if statements.IsEmpty then 
          ""
       else
-         sprintf "%s\r\n" 
+         sprintf "%s;\r\n" 
             (String.Join (";\r\n", 
                [| for statement in statements -> 
                      sprintf "  %O" statement |]))
@@ -598,6 +603,19 @@ type Smoothing =
       | Spring -> "spring"
       | Triangle -> "triangle"
 
+type Splines =
+| Curved
+| Compound
+| Line
+| NoEdges
+| Ortho
+| PolyLine
+| Spline
+   override this.ToString() =
+      match this with
+      | NoEdges -> "none"
+      | _ -> (getUnionCaseName this).ToLowerInvariant()
+
 type Graph
    (
       id : Id, 
@@ -694,6 +712,7 @@ type Graph
    let defaultShowBoxes = ShowBoxes.Off
    let defaultSize : Size option = None
    let defaultSmoothing : Smoothing option = None
+   let defaultSplines : Splines option = None
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -814,6 +833,7 @@ type Graph
    member val ShowBoxes = defaultShowBoxes with get, set
    member val Size = defaultSize with get, set
    member val Smoothing = defaultSmoothing with get, set
+   member val Splines = defaultSplines with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       let addIf v dv name =
@@ -916,13 +936,16 @@ type Graph
       addIf this.ShowBoxes defaultShowBoxes "showboxes"
       addIfS this.Size "size"
       addIfS this.Smoothing "smoothing"
+      // TODO add start attribute
+      addIfS this.Splines "splines"
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes
 //   member __.NodeAttributes = nodeAttributes
 //   member __.EdgeAttributes = edgeAttributes
    member this.WithStatement(statement : Statement) =
-      Graph(this.Id, this.Strictness, this.Kind, this.Statements.WithStatement statement)
+      let statements = this.Statements.WithStatement statement
+      Graph(this.Id, this.Strictness, this.Kind, statements)
       //, this.GraphAttributes, this.NodeAttributes, this.EdgeAttributes)
 //   member this.WithGraphAttribute(attribute : Attribute) =
 //      Graph(this.Id, this.Strictness, this.Kind, this.Statements, this.GraphAttributes.WithAttribute attribute, this.NodeAttributes, this.EdgeAttributes)
@@ -935,15 +958,14 @@ type Graph
          sprintf "\
             %O %O \"%O\"\r\n\
             {\r\n\
-               %O\
-               %O\
+               %O%O\r\n\
             }\
          " 
             this.Strictness
             this.Kind
             this.Id
-            this.GraphAttributes
 //            this.NodeAttributes
+            this.GraphAttributes
 //            this.EdgeAttributes
             this.Statements
       ).Trim()

@@ -5,6 +5,10 @@ open NUnit.Framework
 open FsUnit
 open GraphVizWrapper
 
+// TODO
+// Graph 'start' attribute is missing
+// Added graph 'splines' attribute - needs unit tests
+
 [<AutoOpen>]
 module __ =
    let emptyGraph = 
@@ -1032,7 +1036,7 @@ type GraphTests() =
       let expected = oneEdgeGraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
-            .WithStatement(EdgeStatement(GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Undirected))
+            .WithStatement(EdgeStatement("", GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Undirected))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1041,8 +1045,8 @@ type GraphTests() =
       let expected = twoEdgeGraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
-            .WithStatement(EdgeStatement(GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Undirected))
-            .WithStatement(EdgeStatement(GraphNode(Id "node3"), GraphNode(Id "node4"), Directionality.Undirected))
+            .WithStatement(EdgeStatement("", GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Undirected))
+            .WithStatement(EdgeStatement("", GraphNode(Id "node3"), GraphNode(Id "node4"), Directionality.Undirected))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1051,8 +1055,8 @@ type GraphTests() =
       let expected = twoEdgeDigraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Digraph)
-            .WithStatement(EdgeStatement(GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Directed))
-            .WithStatement(EdgeStatement(GraphNode(Id "node3"), GraphNode(Id "node4"), Directionality.Directed))
+            .WithStatement(EdgeStatement("", GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Directed))
+            .WithStatement(EdgeStatement("", GraphNode(Id "node3"), GraphNode(Id "node4"), Directionality.Directed))
       let actual = sut.ToString()
       actual |> should equal expected
 

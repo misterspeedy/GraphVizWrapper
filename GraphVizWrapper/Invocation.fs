@@ -32,14 +32,20 @@ module Invocation =
          p.StandardInput.Write(stdInContent)
          p.StandardInput.Close()
          use stdError = p.StandardError
-         let message = stdError.ReadToEnd()
+         // TODO restore this - but sometimes it hangs reading stderror
+         //let message = stdError.ReadToEnd()
+         let message = ""
          if System.String.IsNullOrWhiteSpace message then
             match resultFormat with
             | Text ->
                let content = p.StandardOutput.ReadToEnd()
+               // TODO close in one place
+               p.Close()
                CommandResult.SuccessText content
             | Binary -> 
                let content = p.StandardOutput |> toByteArray
+               // TODO close in one place
+               p.Close()
                CommandResult.SuccessBinary content
          elif message.Contains "syntax error" then
             CommandResult.Failure (sprintf "Invalid input content: %s" message)

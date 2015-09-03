@@ -50,6 +50,8 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
+    <Compile Include="Common.fs" />
+    <Compile Include="GraphNode.fs" />
     <Compile Include="Graph.fs" />
   </ItemGroup>
   <ItemGroup>

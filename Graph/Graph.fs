@@ -68,17 +68,6 @@ type GraphKind =
    override this.ToString() =
       (getUnionCaseName this).ToLowerInvariant()
 
-type Id =
-| Id of string
-   override this.ToString() =
-      match this with
-      | Id s -> s
-
-type GraphNode(id : Id) =
-   member __.Id = id
-   override this.ToString() =
-      this.Id.ToString()
-
 // TODO Should it really be possible to add directed edges to graphs
 // and undirected edges to digraphs?
 type Directionality =
@@ -92,15 +81,16 @@ type Directionality =
 type Label = string
 
 type Statement =
-| NodeStatement of GraphNode
-| EdgeStatement of Label * GraphNode * GraphNode * Directionality
+| NodeStatement of GraphNode.GraphNode
+| EdgeStatement of Label * GraphNode.GraphNode * GraphNode.GraphNode * Directionality
    override this.ToString() =
       match this with
       | NodeStatement n -> 
-         sprintf "\"%O\" [shape=box] " n.Id
+         //sprintf "\"%O\" [shape=box] " n.Id
+         sprintf "%O" n
       // TODO unit test for labelling etc
       | EdgeStatement(l, n1, n2, d) ->
-         sprintf "\"%O\" %O \"%O\" [label=\"%s\"; fontsize=12] " n1 d n2 l
+         sprintf "%O %O %O [label=\"%s\"; fontsize=12] " n1 d n2 l
 
 type Statements(statements : Statement list) =
    member __.Statements = statements
@@ -118,11 +108,11 @@ type Statements(statements : Statement list) =
                      sprintf "  %O" statement |]))
 
 type AttributeStatementType =
-| Graph
-| Node
-| Edge
+| GraphStatementType
+| NodeStatementType
+| EdgeStatementType
    override this.ToString() =
-      (getUnionCaseName this).ToLowerInvariant()
+      (getUnionCaseName this).ToLowerInvariant().Replace("statementtype", "")
 
 type Attribute (key : Id, value : Id) =
    member __.Key = key
@@ -374,7 +364,7 @@ type OutputOrder =
 type Overlap =
 | True  
 | False  
-| Scale  
+| OverlapScale // Renamed
 | Prism  
 | PrismN of suffix:int  
 | Voronoi  

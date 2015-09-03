@@ -13,15 +13,15 @@ open GraphVizWrapper
 module __ =
    let emptyGraph = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyDigraph =
       "digraph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyStrictGraph =
       "strict graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let oneNodeGraph =
       "graph \"id\"\r\n\
@@ -982,7 +982,7 @@ module __ =
       {\r\n\
       \x20\x20[ smoothing = \"spring\" ]\
       }"
-  let emptyGraphWithSmoothingTriangle = 
+   let emptyGraphWithSmoothingTriangle = 
       "graph \"id\"\r\n\
       {\r\n\
       \x20\x20[ smoothing = \"triangle\" ]\
@@ -1017,7 +1017,7 @@ type GraphTests() =
       let expected = oneNodeGraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
-            .WithStatement(NodeStatement(GraphNode(Id "node1")))
+            .WithStatement(NodeStatement(GraphNode.GraphNode(Id "node1")))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1026,8 +1026,8 @@ type GraphTests() =
       let expected = twoNodeGraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
-            .WithStatement(NodeStatement(GraphNode(Id "node1")))
-            .WithStatement(NodeStatement(GraphNode(Id "node2")))
+            .WithStatement(NodeStatement(GraphNode.GraphNode(Id "node1")))
+            .WithStatement(NodeStatement(GraphNode.GraphNode(Id "node2")))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1036,7 +1036,7 @@ type GraphTests() =
       let expected = oneEdgeGraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
-            .WithStatement(EdgeStatement("", GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Undirected))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node1"), GraphNode.GraphNode(Id "node2"), Directionality.Undirected))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1045,8 +1045,8 @@ type GraphTests() =
       let expected = twoEdgeGraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
-            .WithStatement(EdgeStatement("", GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Undirected))
-            .WithStatement(EdgeStatement("", GraphNode(Id "node3"), GraphNode(Id "node4"), Directionality.Undirected))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node1"), GraphNode.GraphNode(Id "node2"), Directionality.Undirected))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node3"), GraphNode.GraphNode(Id "node4"), Directionality.Undirected))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1055,8 +1055,8 @@ type GraphTests() =
       let expected = twoEdgeDigraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Digraph)
-            .WithStatement(EdgeStatement("", GraphNode(Id "node1"), GraphNode(Id "node2"), Directionality.Directed))
-            .WithStatement(EdgeStatement("", GraphNode(Id "node3"), GraphNode(Id "node4"), Directionality.Directed))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node1"), GraphNode.GraphNode(Id "node2"), Directionality.Directed))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node3"), GraphNode.GraphNode(Id "node4"), Directionality.Directed))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1775,7 +1775,7 @@ type GraphTests() =
    [<Test>]
    member __.``We can set the overlap element to 'scale'``() =
       let expected = emptyGraphWithOverLapScale
-      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.Scale)
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Overlap = Some Overlap.OverlapScale)
       let actual = sut.ToString()
       actual |> should equal expected
  

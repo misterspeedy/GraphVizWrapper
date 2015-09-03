@@ -6,37 +6,30 @@ open GraphVizWrapper
 
 let ArchitectureToGraph (architecture : Architecture) : CommandResult =
 
-    let nodes =
-        architecture.Components
-        |> Seq.map (fun c -> GraphNode(Id c.Name))
-
     let graph =
         Graph(Id "id", Strictness.NonStrict, GraphKind.Digraph)
 
-    let graph : Graph =
-        nodes |>
-        Seq.fold (fun g item ->
-            let node = GraphNode(item.Id)
-            let ns = NodeStatement node
-            let g' = g.WithStatement(ns)
-            g'
-        ) graph
+    let nodes =
+        architecture.Components
+        |> Seq.map (fun c -> GraphNode.GraphNode(Id c.Name, Shape = GraphNode.Shape.Box))
+        |> Seq.map NodeStatement
+
+    let graph =
+        (graph, nodes) ||>
+        Seq.fold (fun g ns -> g.WithStatement(ns))
 
     let edges =
         architecture
         |> Find.Edges
         |> Seq.map (fun (user, activity, provider) ->
-            let n1 = GraphNode(Id user.Name)
-            let n2 = GraphNode(Id provider.Name)
+            let n1 = GraphNode.GraphNode(Id user.Name)
+            let n2 = GraphNode.GraphNode(Id provider.Name)
             EdgeStatement(activity.Name, n1, n2, Directionality.Directed)
         )
 
-    let graph : Graph =
-        edges |>
-        Seq.fold (fun g es ->
-            let g2 = g.WithStatement(es)
-            g2
-        ) graph
+    let graph =
+        (graph, edges) ||>
+        Seq.fold (fun g es -> g.WithStatement(es))
 
     // TODO somehow make sure all attributes copied on With...
     // but for now set this after adding statements
@@ -49,27 +42,30 @@ let ArchitectureToGraph (architecture : Architecture) : CommandResult =
     // graph.Mode <- Mode.Hier
     //graph.FontName <- "ARIALUNI.TTF"
     //graph.BgColor <- GraphColor.SingleColor(System.Drawing.Color.AliceBlue) |> Some
-
+    let temp = graph.ToString()
     GraphVizWrapper.Invocation.Call(Algo.Dot, OutputType.Png, graph.ToString())
 
-let private GraphToFile(commandResult : CommandResult) =
+let MakeTempFile extension = 
     let tempFileName = Path.GetTempFileName()
-    let tempFileNameExt = 
-        match commandResult with
-        | CommandResult.SuccessText t ->
-            let tempFileSvg = Path.ChangeExtension(tempFileName, "svg")
-            File.Move(tempFileName, tempFileSvg)
-            File.WriteAllText(tempFileSvg, t)
-            tempFileSvg
-        | CommandResult.SuccessBinary b ->
-            let tempFilePng = Path.ChangeExtension(tempFileName, "png")
-            File.Move(tempFileName, tempFilePng)
-            File.WriteAllBytes(tempFilePng, b)
-            tempFilePng
-        | CommandResult.Failure m ->
-            failwithf "Error generating graph: %s" m
-    tempFileNameExt
+    let tempFileSvg = Path.ChangeExtension(tempFileName, extension)
+    File.Move(tempFileName, tempFileSvg)
+    tempFileSvg
 
+let private GraphToFile(commandResult : CommandResult) =
+    match commandResult with
+    | CommandResult.SuccessText t ->
+        let tempFileSvg = MakeTempFile "svg"
+        File.WriteAllText(tempFileSvg, t)
+        tempFileSvg
+    | CommandResult.SuccessBinary b ->
+        let tempFileJpg = MakeTempFile "jpg"
+        File.WriteAllBytes(tempFileJpg, b)
+        tempFileJpg
+    | CommandResult.Failure m ->
+        failwithf "Error generating graph: %s" m
+
+/// Use the system default view to view the file by
+/// shelling using its filename as the argument.
 let ViewGraph (commandResult : CommandResult) =
     let graphFileName = GraphToFile commandResult
     let si =

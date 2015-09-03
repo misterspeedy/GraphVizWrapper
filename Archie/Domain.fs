@@ -71,3 +71,28 @@ module Find =
                     for provider in (Providers ua architecture) do
                         yield user, ua, provider
         }
+
+    let AllProvided (architecture : Architecture) =
+        seq {
+            for provider in architecture.Components do
+                for pa in provider.Provided do
+                    yield pa
+        } |> Set.ofSeq
+
+    let AllUsed (architecture : Architecture) =
+        seq {
+            for user in architecture.Components do
+                for ua in user.Used do
+                    yield ua
+        } |> Set.ofSeq
+        
+    let Validate (architecture : Architecture) =
+        let p = architecture |> AllProvided
+        let u = architecture |> AllUsed
+        printf "Provided but not used:"
+        for activity in p - u do
+            printfn "%A" activity
+        printf "Used but not provided:"
+        for activity in u - p do
+            printfn "%A" activity
+        

@@ -1,5 +1,5 @@
 ﻿open ArchieToGraph
-open Archie.ResourceManager
+open Archie.ResourceManager2
 
 [<EntryPoint>]
 let main argv = 

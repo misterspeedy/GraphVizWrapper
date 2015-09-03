@@ -116,7 +116,7 @@ module Components =
             .Uses(ResourceManager.getTicket)
 
     let dynamoDbScalingRequestQueue = 
-        Component("DynamoDB Scaling Request Queue", Processor, Singleton)
+        Component("DynamoDB Scaling Request Queue", Queue, Singleton)
             .Provides(DynamoDbScalingRequestQueue.addRequest)
             .Provides(DynamoDbScalingRequestQueue.getNextWaiting)
             .Provides(DynamoDbScalingRequestQueue.setUpdating)

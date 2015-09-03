@@ -4,6 +4,13 @@ open System.IO
 open Archie
 open GraphVizWrapper
 
+let ComponentKindToShape = function
+| Client -> GraphNode.Shape.Oval
+| Store -> GraphNode.Shape.Folder
+| Processor -> GraphNode.Shape.Box 
+| UserInterface -> GraphNode.Shape.MSquare
+| Queue -> GraphNode.Shape.Cds
+
 let ArchitectureToGraph (architecture : Architecture) : CommandResult =
 
     let graph =
@@ -11,7 +18,7 @@ let ArchitectureToGraph (architecture : Architecture) : CommandResult =
 
     let nodes =
         architecture.Components
-        |> Seq.map (fun c -> GraphNode.GraphNode(Id c.Name, Shape = GraphNode.Shape.Box))
+        |> Seq.map (fun c -> GraphNode.GraphNode(Id c.Name, Shape = ComponentKindToShape c.Kind))
         |> Seq.map NodeStatement
 
     let graph =

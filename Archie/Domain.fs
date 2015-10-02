@@ -7,6 +7,7 @@ type ConnectionKind =
 | Http
 | AzureServiceBus
 | Sql
+| ShellToExe
 
 type ComponentKind =
 | Client

@@ -5,11 +5,13 @@ open Archie
 module TicketStore =
 
     let insertTicket = Activity.New("Insert Ticket" , Command, Sql)
-    let retrieveTicket = Activity.New("Get Ticket" , Query, Sql)
+    let getTicket = Activity.New("Get Ticket" , Query, Sql)
     let updateLastLive = Activity.New("Update Last Live" , Command, Sql)
     let updateStatus = Activity.New("Update Status" , Command, Sql)
     let getForStatus = Activity.New("Get For Status" , Query, Sql)
-    // Omitted GetForResourceType and GetForResourceTypeAndStatus
+    let getAllocationRequested = Activity.New("Get Tickets Where Allocation Requested", Query, Sql)
+    let getForResourceType = Activity.New("Get Tickets\rfor\rResource Type", Query, Sql)
+    let getForResourceTypeAndStatus = Activity.New("Get Tickets\rfor Resource Type\r& Status", Query, Sql)
 
 module ResourceManager =
 
@@ -22,7 +24,8 @@ module ResourceAllocator =
 
     let requestScaleUpTo = Activity.New("Request Scale Up To", Command, InProcess)
     let requestScaleDown = Activity.New("Request Scale Down", Command, InProcess)
-    let getCurrentProvisioning = Activity.New("Get Provisioning", Query, InProcess)
+    let getCurrentScale = Activity.New("Get Current Scale", Query, InProcess)
+    let getResourceHandle = Activity.New("Get Resource Handle", Query, InProcess)
 
 module ResourceAllocatorStore =
 
@@ -69,10 +72,12 @@ module Components =
     let ticketStore =
         Component("Ticket Store", Store, Singleton)
             .Provides(TicketStore.insertTicket)
-            .Provides(TicketStore.retrieveTicket)
+            .Provides(TicketStore.getTicket)
             .Provides(TicketStore.updateLastLive)
             .Provides(TicketStore.updateStatus)
             .Provides(TicketStore.getForStatus)
+            .Provides(TicketStore.getForResourceType)
+            .Provides(TicketStore.getForResourceTypeAndStatus)
 
     let resourceManager =
         Component("Resource Manager", Processor, Singleton)
@@ -81,7 +86,7 @@ module Components =
             .Provides(ResourceManager.notifyStillAlive)
             .Provides(ResourceManager.notifyComplete)
             .Uses(TicketStore.updateLastLive)
-            .Uses(TicketStore.retrieveTicket)
+            .Uses(TicketStore.getTicket)
             .Uses(TicketStore.insertTicket)
 
     let resourceAllocatorStore =
@@ -93,7 +98,8 @@ module Components =
         Component("Resource Allocator", Processor, Singleton)
             .Provides(ResourceAllocator.requestScaleUpTo)
             .Provides(ResourceAllocator.requestScaleDown)
-            .Provides(ResourceAllocator.getCurrentProvisioning)
+            .Provides(ResourceAllocator.getCurrentScale)
+            .Provides(ResourceAllocator.getResourceHandle)
             .Uses(ResourceController.requestScaleDown)
             .Uses(ResourceController.requestScaleUpTo)
             .Uses(ResourceAllocatorStore.getScale)
@@ -115,6 +121,11 @@ module Components =
             .Uses(ResourceManager.getAllocationStatus)  
             .Uses(ResourceManager.getTicket)
 
+    let managementClient = 
+        Component("Management Client", Client, Multiple)
+            .Uses(TicketStore.getForResourceType)
+            .Uses(TicketStore.getForResourceTypeAndStatus)
+
     let dynamoDbScalingRequestQueue = 
         Component("DynamoDB Scaling Request Queue", Queue, Singleton)
             .Provides(DynamoDbScalingRequestQueue.addRequest)
@@ -134,7 +145,6 @@ module Components =
         Component("DynamoDB Proxy", Processor, Singleton)
             .Provides(DynamoDBProxy.getTableStatus)
             .Provides(DynamoDBProxy.scaleTableReadsTo)
-            //.Provides(DynamoDBProxy.getCurrentProvisioning)
             .Uses(AWSDyanamoDBApi.updateTable)
             .Uses(AWSDyanamoDBApi.describeTable)
 
@@ -152,12 +162,13 @@ module Components =
     let scheduler =
         Component("Scheduler", Processor, Singleton)
             .Provides(Scheduler.notifyAllocationCompleted)
-            .Uses(ResourceAllocator.getCurrentProvisioning)
+            .Uses(ResourceAllocator.getResourceHandle)
             .Uses(ResourceAllocator.requestScaleDown)
             .Uses(ResourceAllocator.requestScaleUpTo)
-            //.Uses(DynamoDBProxy.getCurrentProvisioning)
+            .Uses(ResourceAllocator.getCurrentScale)
             .Uses(TicketStore.updateStatus)
             .Uses(TicketStore.getForStatus)
+            .Uses(TicketStore.getAllocationRequested)
 
 open Components
 
@@ -171,6 +182,8 @@ let resourceManager =
                 resourceAllocator
                 resourceAllocatorStore
                 client
+                // Hidden for simplicity
+                // managementClient
                 resourceController
                 dynamoDbScalingRequestQueue
                 awsDynamoDBApi

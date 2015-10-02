@@ -26,966 +26,966 @@ module __ =
    let oneNodeGraph =
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20\"node1\"\r\n\
+      \x20\x20\"node1\";\r\n\r\n\
       }"
    let twoNodeGraph =
       "graph \"id\"\r\n\
       {\r\n\
       \x20\x20\"node1\";\r\n\
-      \x20\x20\"node2\"\r\n\
+      \x20\x20\"node2\";\r\n\r\n\
       }"
    let oneEdgeGraph =
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20\"node1\" -- \"node2\"\r\n\
+      \x20\x20\"node1\" -- \"node2\";\r\n\r\n\
       }"
    let twoEdgeGraph =
       "graph \"id\"\r\n\
       {\r\n\
       \x20\x20\"node1\" -- \"node2\";\r\n\
-      \x20\x20\"node3\" -- \"node4\"\r\n\
+      \x20\x20\"node3\" -- \"node4\";\r\n\r\n\
       }"
    let twoEdgeDigraph =
       "digraph \"id\"\r\n\
       {\r\n\
       \x20\x20\"node1\" -> \"node2\";\r\n\
-      \x20\x20\"node3\" -> \"node4\"\r\n\
+      \x20\x20\"node3\" -> \"node4\";\r\n\r\n\
       }"
    let emptyGraphWithDamping = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ Damping = 0.5 ]\
+      \x20\x20Damping = 0.5;\r\n\r\n\
       }"
    let emptyGraphWithK = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ K = 1.1 ]\
+      \x20\x20K = 1.1;\r\n\r\n\
       }"
    let emptyGraphWithDampingAndK = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ Damping = 0.5; K = 1.1 ]\
+      \x20\x20Damping = 0.5;\r\n\x20\x20K = 1.1;\r\n\r\n\
       }"
    let emptyGraphWithUrl = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ URL = \"www.kiteason.com\" ]\
+      \x20\x20URL = \"www.kiteason.com\";\r\n\r\n\
       }"
    let emptyGraphWithBackground = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ _background = \"background xdot\" ]\
+      \x20\x20_background = \"background xdot\";\r\n\r\n\
       }"
    let emptyGraphWithBb = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ bb = \"0,1.11,2.222,3.3333\" ]\
+      \x20\x20bb = \"0,1.11,2.222,3.3333\";\r\n\r\n\
       }"
    let emptyGraphWithBgColorNamed = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ bgcolor = \"PeachPuff\" ]\
+      \x20\x20bgcolor = \"PeachPuff\";\r\n\r\n\
       }"
    let emptyGraphWithBgColorArgb = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ bgcolor = \"#01020304\" ]\
+      \x20\x20bgcolor = \"#01020304\";\r\n\r\n\
       }"
    let emptyGraphWithBgColorList = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ bgcolor = \"PeachPuff;0.4:#01020304;0.6\" ]\
+      \x20\x20bgcolor = \"PeachPuff;0.4:#01020304;0.6\";\r\n\r\n\
       }"
    let emptyGraphWithBgColorListNoWeighting = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ bgcolor = \"PeachPuff:#01020304\" ]\
+      \x20\x20bgcolor = \"PeachPuff:#01020304\";\r\n\r\n\
       }"
    let emptyGraphWithCenter = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ center = true ]\
+      \x20\x20center = true;\r\n\r\n\
       }"
    let emptyGraphWithCharset = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ charset = \"UTF-16\" ]\
+      \x20\x20charset = \"UTF-16\";\r\n\r\n\
       }"
    let emptyGraphWithClusterRank = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ clusterrank = \"global\" ]\
+      \x20\x20clusterrank = \"global\";\r\n\r\n\
       }"
    let emptyGraphWithColorNamed = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ color = \"PeachPuff\" ]\
+      \x20\x20color = \"PeachPuff\";\r\n\r\n\
       }"
    let emptyGraphWithColorArgb = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ color = \"#01020304\" ]\
+      \x20\x20color = \"#01020304\";\r\n\r\n\
       }"
    let emptyGraphWithColorList = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ color = \"PeachPuff;0.4:#01020304;0.6\" ]\
+      \x20\x20color = \"PeachPuff;0.4:#01020304;0.6\";\r\n\r\n\
       }"
    let emptyGraphWithColorScheme = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ colorscheme = \"color scheme\" ]\
+      \x20\x20colorscheme = \"color scheme\";\r\n\r\n\
       }"
    let emptyGraphWithComment = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ comment = \"this is a comment\" ]\
+      \x20\x20comment = \"this is a comment\";\r\n\r\n\
       }"
    let emptyGraphWithCompound = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ compound = true ]\
+      \x20\x20compound = true;\r\n\r\n\
       }"
    let emptyGraphWithConcentrate = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ concentrate = true ]\
+      \x20\x20concentrate = true;\r\n\r\n\
       }"
    let emptyGraphWithDefaultDistance = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ defaultdist = 3.142 ]\
+      \x20\x20defaultdist = 3.142;\r\n\r\n\
       }"
    let emptyGraphWithDim = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ dim = 3 ]\
+      \x20\x20dim = 3;\r\n\r\n\
       }"
    let emptyGraphWithDimen = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ dimen = 10 ]\
+      \x20\x20dimen = 10;\r\n\r\n\
       }"
    let emptyGraphWithDirEdgeConstraintsTrue = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ diredgeconstraints = true ]\
+      \x20\x20diredgeconstraints = true;\r\n\r\n\
       }"
    let emptyGraphWithDirEdgeConstraintsHier = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ diredgeconstraints = \"hier\" ]\
+      \x20\x20diredgeconstraints = \"hier\";\r\n\r\n\
       }"
    let emptyGraphWithDpi = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ dpi = 123.4 ]\
+      \x20\x20dpi = 123.4;\r\n\r\n\
       }"
    let emptyGraphWithEpsilon = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ epsilon = 1.2 ]\
+      \x20\x20epsilon = 1.2;\r\n\r\n\
       }"
    let emptyGraphWithESepSimpleNonAdditive = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ esep = 1.2 ]\
+      \x20\x20esep = 1.2;\r\n\r\n\
       }"
    let emptyGraphWithESepPointNonAdditive = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ esep = \"1.2,3.4\" ]\
+      \x20\x20esep = \"1.2,3.4\";\r\n\r\n\
       }"
    let emptyGraphWithESepSimpleAdditive = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ esep = +1.2 ]\
+      \x20\x20esep = +1.2;\r\n\r\n\
       }"
    let emptyGraphWithESepPointAdditive = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ esep = \"+1.2,3.4\" ]\
+      \x20\x20esep = \"+1.2,3.4\";\r\n\r\n\
       }"
    let emptyGraphWithFontColor = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ fontcolor = \"PeachPuff\" ]\
+      \x20\x20fontcolor = \"PeachPuff\";\r\n\r\n\
       }"
    let emptyGraphWithFontName = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ fontname = \"Helvetica\" ]\
+      \x20\x20fontname = \"Helvetica\";\r\n\r\n\
       }"
    let emptyGraphWithFontNames = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ fontnames = \"svg\" ]\
+      \x20\x20fontnames = \"svg\";\r\n\r\n\
       }"
    let emptyGraphWithFontPath = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ fontpath = \"c:\\fonts\" ]\
+      \x20\x20fontpath = \"c:\\fonts\";\r\n\r\n\
       }"
    let emptyGraphWithFontSize = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ fontsize = 11.5 ]\
+      \x20\x20fontsize = 11.5;\r\n\r\n\
       }"
    let emptyGraphWithForceLabels = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ forcelabels = false ]\
+      \x20\x20forcelabels = false;\r\n\r\n\
       }"
    let emptyGraphWithGradientAngle = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ gradientangle = 180 ]\
+      \x20\x20gradientangle = 180;\r\n\r\n\
       }"
    let emptyGraphWithId = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ id = \"id attribute\" ]\
+      \x20\x20id = \"id attribute\";\r\n\r\n\
       }"
    let emptyGraphWithImagePath = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ imagepath = \"element1;element2\" ]\
+      \x20\x20imagepath = \"element1;element2\";\r\n\r\n\
       }"
    let emptyGraphWithInputScale = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ inputscale = 36 ]\
+      \x20\x20inputscale = 36;\r\n\r\n\
       }"
    let emptyGraphWithLabel = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ label = \"graph label\" ]\
+      \x20\x20label = \"graph label\";\r\n\r\n\
       }"
    let emptyGraphWithLabelSchemePenaltyCenter = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ labelscheme = 1 ]\
+      \x20\x20labelscheme = 1;\r\n\r\n\
       }"
    let emptyGraphWithLabelSchemePenaltyOldCenter = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ labelscheme = 2 ]\
+      \x20\x20labelscheme = 2;\r\n\r\n\
       }"
    let emptyGraphWithLabelSchemeTwoStep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ labelscheme = 3 ]\
+      \x20\x20labelscheme = 3;\r\n\r\n\
       }"
    let emptyGraphWithLabelJustRight = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ labeljust = \"r\" ]\
+      \x20\x20labeljust = \"r\";\r\n\r\n\
       }"
    let emptyGraphWithLabelJustLeft = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ labeljust = \"l\" ]\
+      \x20\x20labeljust = \"l\";\r\n\r\n\
       }"
    let emptyGraphWithLabelLocTop = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ labelloc = \"t\" ]\
+      \x20\x20labelloc = \"t\";\r\n\r\n\
       }"
    let emptyGraphWithLabelLocCenter = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ labelloc = \"c\" ]\
+      \x20\x20labelloc = \"c\";\r\n\r\n\
       }"
    let emptyGraphWithLabelLocBottom = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ labelloc = \"b\" ]\
+      \x20\x20labelloc = \"b\";\r\n\r\n\
       }"
    // Landscape = true is a synonym for rotation = 90
    let emptyGraphWithLandscape = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ rotation = 90 ]\
+      \x20\x20rotation = 90;\r\n\r\n\
       }"
    let emptyGraphWithLayerListSep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ layerlistsep = \";\" ]\
+      \x20\x20layerlistsep = \";\";\r\n\r\n\
       }"
    let emptyGraphWithLayerSep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ layersep = \"|\" ]\
+      \x20\x20layersep = \"|\";\r\n\r\n\
       }"
    let emptyGraphWithLayersUsingDefaultSep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ layers = \"layer1:layer2\" ]\
+      \x20\x20layers = \"layer1:layer2\";\r\n\r\n\
       }"
    let emptyGraphWithLayersUsingNonDefaultSep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ layers = \"layer1|layer2\"; layersep = \"|\" ]\
+      \x20\x20layers = \"layer1|layer2\";\r\n\x20\x20layersep = \"|\";\r\n\r\n\
       }"
    let emptyGraphWithLayerSelectSome = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ layers = \"layer1:layer2:layer3\"; \
-      layerselect = \"1,3\" ]\
+      \x20\x20layers = \"layer1:layer2:layer3\";\r\n\
+      \x20\x20layerselect = \"1,3\";\r\n\r\n\
       }"
    let emptyGraphWithLayerSelectSomeNonDefaultLayerListSep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ layerlistsep = \"|\"; \
-      layers = \"layer1:layer2:layer3\"; \
-      layerselect = \"1|3\" ]\
+      \x20\x20layerlistsep = \"|\";\r\n\
+      \x20\x20layers = \"layer1:layer2:layer3\";\r\n\
+      \x20\x20layerselect = \"1|3\";\r\n\r\n\
       }"
    let emptyGraphWithLayout = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ layout = \"neato\" ]\
+      \x20\x20layout = \"neato\";\r\n\r\n\
       }"
    let emptyGraphWithLevels = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ levels = 99 ]\
+      \x20\x20levels = 99;\r\n\r\n\
       }"
    let emptyGraphWithLevelsGap = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ levelsgap = 0.1 ]\
+      \x20\x20levelsgap = 0.1;\r\n\r\n\
       }"
    let emptyGraphWithLHeight = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ lheight = 1.2 ]\
+      \x20\x20lheight = 1.2;\r\n\r\n\
       }"
    let emptyGraphWithLp = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ lp = \"1.2,3.4\" ]\
+      \x20\x20lp = \"1.2,3.4\";\r\n\r\n\
       }"
    let emptyGraphWithLWidth = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ lwidth = 5.6 ]\
+      \x20\x20lwidth = 5.6;\r\n\r\n\
       }"
    let emptyGraphWithSingleMargin = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ margin = 7.8 ]\
+      \x20\x20margin = 7.8;\r\n\r\n\
       }"
    let emptyGraphWithXYMargin = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ margin = \"7.8,9.1\" ]\
+      \x20\x20margin = \"7.8,9.1\";\r\n\r\n\
       }"
    let emptyGraphWithMaxIter = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ maxiter = 999 ]\
+      \x20\x20maxiter = 999;\r\n\r\n\
       }"
    let emptyGraphWithMcLimit = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ mclimit = 1.5 ]\
+      \x20\x20mclimit = 1.5;\r\n\r\n\
       }"
    let emptyGraphWithMinDist = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ mindist = 0.4 ]\
+      \x20\x20mindist = 0.4;\r\n\r\n\
       }"
    // Major is the default
    let emptyGraphWithModeMajor = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyGraphWithModeKK = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ mode = \"KK\" ]\
+      \x20\x20mode = \"KK\";\r\n\r\n\
       }"
    let emptyGraphWithModeHier = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ mode = \"hier\" ]\
+      \x20\x20mode = \"hier\";\r\n\r\n\
       }"
    let emptyGraphWithModeIpSep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ mode = \"ipsep\" ]\
+      \x20\x20mode = \"ipsep\";\r\n\r\n\
       }"
    let emptyGraphWithModeSpring = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ mode = \"spring\" ]\
+      \x20\x20mode = \"spring\";\r\n\r\n\
       }"
    let emptyGraphWithModeMaxEnt = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ mode = \"maxent\" ]\
+      \x20\x20mode = \"maxent\";\r\n\r\n\
       }"
    // Shortpath is the default
    let emptyGraphWithModelShortPath = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyGraphWithModelCircuit = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ model = \"circuit\" ]\
+      \x20\x20model = \"circuit\";\r\n\r\n\
       }"
    let emptyGraphWithModelSubset = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ model = \"subset\" ]\
+      \x20\x20model = \"subset\";\r\n\r\n\
       }"
    let emptyGraphWithModelMds = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ model = \"mds\" ]\
+      \x20\x20model = \"mds\";\r\n\r\n\
       }"
    let emptyGraphWithMosek = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ mosek = true ]\
+      \x20\x20mosek = true;\r\n\r\n\
       }"
    let emptyGraphWithNodeSep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ nodesep = 0.8 ]\
+      \x20\x20nodesep = 0.8;\r\n\r\n\
       }"
    let emptyGraphWithNoJustify = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ nojustify = true ]\
+      \x20\x20nojustify = true;\r\n\r\n\
       }"
    let emptyGraphWithNormalizeTrue = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ normalize = true ]\
+      \x20\x20normalize = true;\r\n\r\n\
       }"
    let emptyGraphWithNormalizeNumber = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ normalize = 22.5 ]\
+      \x20\x20normalize = 22.5;\r\n\r\n\
       }"
    let emptyGraphWithNoTranslate = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ notranslate = true ]\
+      \x20\x20notranslate = true;\r\n\r\n\
       }"
    let emptyGraphWithNsLimit = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ nslimit = 3.2 ]\
+      \x20\x20nslimit = 3.2;\r\n\r\n\
       }"
    let emptyGraphWithNsLimit1 = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ nslimit1 = 5.4 ]\
+      \x20\x20nslimit1 = 5.4;\r\n\r\n\
       }"
    let emptyGraphWithOrderingOut = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ordering = \"out\" ]\
+      \x20\x20ordering = \"out\";\r\n\r\n\
       }"
    let emptyGraphWithOrderingIn = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ordering = \"in\" ]\
+      \x20\x20ordering = \"in\";\r\n\r\n\
       }"
    let emptyGraphWithOrientation = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ orientation = 22.5 ]\
+      \x20\x20orientation = 22.5;\r\n\r\n\
       }"
    // breadthfirst is the default:
    let emptyGraphWithOutputOrderBreadthFirst = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyGraphWithOutputOrderNodesFirst = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ outputorder = \"nodesfirst\" ]\
+      \x20\x20outputorder = \"nodesfirst\";\r\n\r\n\
       }"
    let emptyGraphWithOutputOrderEdgesFirst = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ outputorder = \"edgesfirst\" ]\
+      \x20\x20outputorder = \"edgesfirst\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapTrue = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = true ]\
+      \x20\x20overlap = true;\r\n\r\n\
       }"
    let emptyGraphWithOverLapFalse = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = false ]\
+      \x20\x20overlap = false;\r\n\r\n\
       }"
    let emptyGraphWithOverLapScale = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"scale\" ]\
+      \x20\x20overlap = \"scale\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapPrism = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"prism\" ]\
+      \x20\x20overlap = \"prism\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapPrismSuffix = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"prism3\" ]\
+      \x20\x20overlap = \"prism3\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapVoronoi = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"voronoi\" ]\
+      \x20\x20overlap = \"voronoi\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapscaleXY = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"scalexy\" ]\
+      \x20\x20overlap = \"scalexy\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapCompress = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"compress\" ]\
+      \x20\x20overlap = \"compress\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapVpsc = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"vpsc\" ]\
+      \x20\x20overlap = \"vpsc\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapOrtho = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"ortho\" ]\
+      \x20\x20overlap = \"ortho\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapOrthoXY = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"orthoxy\" ]\
+      \x20\x20overlap = \"orthoxy\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapOrthoYX = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"orthoyx\" ]\
+      \x20\x20overlap = \"orthoyx\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapOrtho_YX = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"ortho_yx\" ]\
+      \x20\x20overlap = \"ortho_yx\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapPOrtho = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"portho\" ]\
+      \x20\x20overlap = \"portho\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapPOrthoXY = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"porthoxy\" ]\
+      \x20\x20overlap = \"porthoxy\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapPOrthoYX = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"porthoyx\" ]\
+      \x20\x20overlap = \"porthoyx\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapPOrtho_YX = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"portho_yx\" ]\
+      \x20\x20overlap = \"portho_yx\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapIpSep = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"ipsep\" ]\
+      \x20\x20overlap = \"ipsep\";\r\n\r\n\
       }"
    let emptyGraphWithOverLapTruePrefix = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap = \"2:true\" ]\
+      \x20\x20overlap = \"2:true\";\r\n\r\n\
       }"
    // -4 is the default
    let emptyGraphWithOverLapScalingMinus4 = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyGraphWithOverLapScaling = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap_scaling = 3 ]\
+      \x20\x20overlap_scaling = 3;\r\n\r\n\
       }"
    let emptyGraphWithOverLapShrink = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ overlap_shrink = false ]\
+      \x20\x20overlap_shrink = false;\r\n\r\n\
       }"
    // false is the default
    let emptyGraphWithPackFalse = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyGraphWithPackTrue = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pack = true ]\
+      \x20\x20pack = true;\r\n\r\n\
       }"
    let emptyGraphWithPackN = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pack = 12 ]\
+      \x20\x20pack = 12;\r\n\r\n\
       }"
    // This is the default
    let emptyGraphWithPackModeNode = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyGraphWithPackModeClust = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"clust\" ]\
+      \x20\x20packmode = \"clust\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeGraph = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"graph\" ]\
+      \x20\x20packmode = \"graph\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArray = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array\" ]\
+      \x20\x20packmode = \"array\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArrayC = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array_c\" ]\
+      \x20\x20packmode = \"array_c\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArrayCN = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array_c5\" ]\
+      \x20\x20packmode = \"array_c5\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArrayT = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array_t\" ]\
+      \x20\x20packmode = \"array_t\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArrayB = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array_b\" ]\
+      \x20\x20packmode = \"array_b\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArrayL = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array_l\" ]\
+      \x20\x20packmode = \"array_l\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArrayR = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array_r\" ]\
+      \x20\x20packmode = \"array_r\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArrayCNR = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array_c3r\" ]\
+      \x20\x20packmode = \"array_c3r\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArrayU = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array_u\" ]\
+      \x20\x20packmode = \"array_u\";\r\n\r\n\
       }"
    let emptyGraphWithPackModeArrayCNRU = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ packmode = \"array_c3ru\" ]\
+      \x20\x20packmode = \"array_c3ru\";\r\n\r\n\
       }"
    let emptyGraphWithPadN = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pad = 1.2 ]\
+      \x20\x20pad = 1.2;\r\n\r\n\
       }"
    let emptyGraphWithPadXY = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pad = \"1.2,3.4\" ]\
+      \x20\x20pad = \"1.2,3.4\";\r\n\r\n\
       }"
    let emptyGraphWithPageN = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ page = 4.5 ]\
+      \x20\x20page = 4.5;\r\n\r\n\
       }"
    let emptyGraphWithPageXY = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ page = \"4.5,6.7\" ]\
+      \x20\x20page = \"4.5,6.7\";\r\n\r\n\
       }"
    // This is the default:
    let emptyGraphWithPageDirBL = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyGraphWithPageDirBR = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pagedir = \"BR\" ]\
+      \x20\x20pagedir = \"BR\";\r\n\r\n\
       }"
    let emptyGraphWithPageDirTL = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pagedir = \"TL\" ]\
+      \x20\x20pagedir = \"TL\";\r\n\r\n\
       }"
    let emptyGraphWithPageDirTR = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pagedir = \"TR\" ]\
+      \x20\x20pagedir = \"TR\";\r\n\r\n\
       }"
    let emptyGraphWithPageDirRB = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pagedir = \"RB\" ]\
+      \x20\x20pagedir = \"RB\";\r\n\r\n\
       }"
    let emptyGraphWithPageDirRT = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pagedir = \"RT\" ]\
+      \x20\x20pagedir = \"RT\";\r\n\r\n\
       }"
    let emptyGraphWithPageDirLB = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pagedir = \"LB\" ]\
+      \x20\x20pagedir = \"LB\";\r\n\r\n\
       }"
    let emptyGraphWithPageDirLT = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pagedir = \"LT\" ]\
+      \x20\x20pagedir = \"LT\";\r\n\r\n\
       }"
    let emptyGraphWithPenColorNamed = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pencolor = \"PeachPuff\" ]\
+      \x20\x20pencolor = \"PeachPuff\";\r\n\r\n\
       }"
    let emptyGraphWithPenColorArgb = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pencolor = \"#01020304\" ]\
+      \x20\x20pencolor = \"#01020304\";\r\n\r\n\
       }"
    let emptyGraphWithPenColorList = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pencolor = \"PeachPuff;0.4:#01020304;0.6\" ]\
+      \x20\x20pencolor = \"PeachPuff;0.4:#01020304;0.6\";\r\n\r\n\
       }"
    let emptyGraphWithPenColorListNoWeighting = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ pencolor = \"PeachPuff:#01020304\" ]\
+      \x20\x20pencolor = \"PeachPuff:#01020304\";\r\n\r\n\
       }"
    // This is the default
    let emptyGraphWithQuadtreeNormal = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyGraphWithQuadtreeNone = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ quadtree = \"none\" ]\
+      \x20\x20quadtree = \"none\";\r\n\r\n\
       }"
    let emptyGraphWithQuadtreeFast = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ quadtree = \"fast\" ]\
+      \x20\x20quadtree = \"fast\";\r\n\r\n\
       }"
    let emptyGraphWithQuantum = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ quantum = 1.23 ]\
+      \x20\x20quantum = 1.23;\r\n\r\n\
       }"
    // This is the default:
    let emptyGraphWithRankdirTB = 
       "graph \"id\"\r\n\
-      {\r\n\
+      {\r\n\r\n\
       }"
    let emptyGraphWithRankdirLR = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ rankdir = \"LR\" ]\
+      \x20\x20rankdir = \"LR\";\r\n\r\n\
       }"
    let emptyGraphWithRankdirBT = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ rankdir = \"BT\" ]\
+      \x20\x20rankdir = \"BT\";\r\n\r\n\
       }"
    let emptyGraphWithRankdirRL = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ rankdir = \"RL\" ]\
+      \x20\x20rankdir = \"RL\";\r\n\r\n\
       }"
    let emptyGraphWithRankSepOne = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ranksep = 1.2 ]\
+      \x20\x20ranksep = 1.2;\r\n\r\n\
       }"
    let emptyGraphWithRankSepSeveral = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ranksep = \"1.2:3.4:5.6\" ]\
+      \x20\x20ranksep = \"1.2:3.4:5.6\";\r\n\r\n\
       }"
    let emptyGraphWithRankSepOneEqually = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ranksep = \"1.2 equally\" ]\
+      \x20\x20ranksep = \"1.2 equally\";\r\n\r\n\
       }"
    let emptyGraphWithRatioN = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ratio = 1.2 ]\
+      \x20\x20ratio = 1.2;\r\n\r\n\
       }"
    let emptyGraphWithRatioFill = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ratio = \"fill\" ]\
+      \x20\x20ratio = \"fill\";\r\n\r\n\
       }"
    let emptyGraphWithRatioCompress = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ratio = \"compress\" ]\
+      \x20\x20ratio = \"compress\";\r\n\r\n\
       }"
    let emptyGraphWithRatioExpand = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ratio = \"expand\" ]\
+      \x20\x20ratio = \"expand\";\r\n\r\n\
       }"
    let emptyGraphWithRatioAuto = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ ratio = \"auto\" ]\
+      \x20\x20ratio = \"auto\";\r\n\r\n\
       }"
    let emptyGraphWithReMinCross = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ remincross = false ]\
+      \x20\x20remincross = false;\r\n\r\n\
       }"
    let emptyGraphWithRepulsiveForce = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ repulsiveforce = 1.9 ]\
+      \x20\x20repulsiveforce = 1.9;\r\n\r\n\
       }"
    // Resolution is a synonym for DPI
    let emptyGraphWithResolution = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ dpi = 456.7 ]\
+      \x20\x20dpi = 456.7;\r\n\r\n\
       }"
    let emptyGraphWithRoot = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ root = \"node99\" ]\
+      \x20\x20root = \"node99\";\r\n\r\n\
       }"
    // Rotate.Landscape (90) is a synonym for Rotation = 90
    let emptyGraphWithRotate = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ rotation = 90 ]\
+      \x20\x20rotation = 90;\r\n\r\n\
       }"
    let emptyGraphWithScaleN = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ scale = 1.2 ]\
+      \x20\x20scale = 1.2;\r\n\r\n\
       }"
    let emptyGraphWithScaleXY = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ scale = \"1.2,3.4\" ]\
+      \x20\x20scale = \"1.2,3.4\";\r\n\r\n\
       }"
    let emptyGraphWithSearchSize = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ searchsize = 35 ]\
+      \x20\x20searchsize = 35;\r\n\r\n\
       }"
    let emptyGraphWithSepN = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ sep = 10 ]\
+      \x20\x20sep = 10;\r\n\r\n\
       }"
    let emptyGraphWithSepXY = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ sep = \"10,12\" ]\
+      \x20\x20sep = \"10,12\";\r\n\r\n\
       }"
    let emptyGraphWithSepPlusN = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ sep = +10 ]\
+      \x20\x20sep = +10;\r\n\r\n\
       }"
    let emptyGraphWithSepPlusXY = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ sep = \"+10,12\" ]\
+      \x20\x20sep = \"+10,12\";\r\n\r\n\
       }"
    let emptyGraphWithShowBoxesBeginning = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ showboxes = 1 ]\
+      \x20\x20showboxes = 1;\r\n\r\n\
       }"
    let emptyGraphWithShowBoxesEnd = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ showboxes = 2 ]\
+      \x20\x20showboxes = 2;\r\n\r\n\
       }"
    let emptyGraphWithSizeN = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ size = 2.1 ]\
+      \x20\x20size = 2.1;\r\n\r\n\
       }"
    let emptyGraphWithSizeXY = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ size = \"2.1,3.4\" ]\
+      \x20\x20size = \"2.1,3.4\";\r\n\r\n\
       }"
    let emptyGraphWithSizeNDesired = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ size = \"2.1!\" ]\
+      \x20\x20size = \"2.1!\";\r\n\r\n\
       }"
    let emptyGraphWithSizeXYDesired = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ size = \"2.1,3.4!\" ]\
+      \x20\x20size = \"2.1,3.4!\";\r\n\r\n\
       }"
    let emptyGraphWithSmoothingAverageDistance = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ smoothing = \"avg_dist\" ]\
+      \x20\x20smoothing = \"avg_dist\";\r\n\r\n\
       }"
    let emptyGraphWithSmoothingGraphDistance = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ smoothing = \"graph_dist\" ]\
+      \x20\x20smoothing = \"graph_dist\";\r\n\r\n\
       }"
    let emptyGraphWithSmoothingPowerDistance = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ smoothing = \"power_dist\" ]\
+      \x20\x20smoothing = \"power_dist\";\r\n\r\n\
       }"
    let emptyGraphWithSmoothingRandom = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ smoothing = \"rng\" ]\
+      \x20\x20smoothing = \"rng\";\r\n\r\n\
       }"
    let emptyGraphWithSmoothingSpring = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ smoothing = \"spring\" ]\
+      \x20\x20smoothing = \"spring\";\r\n\r\n\
       }"
    let emptyGraphWithSmoothingTriangle = 
       "graph \"id\"\r\n\
       {\r\n\
-      \x20\x20[ smoothing = \"triangle\" ]\
+      \x20\x20smoothing = \"triangle\";\r\n\r\n\
       }"
 
 [<TestFixture>]

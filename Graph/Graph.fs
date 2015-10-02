@@ -90,7 +90,8 @@ type Statement =
          sprintf "%O" n
       // TODO unit test for labelling etc
       | EdgeStatement(l, n1, n2, d) ->
-         sprintf "%O %O %O [label=\"%s\"; fontsize=12] " n1 d n2 l
+         // For Archie: sprintf "%O %O %O [label=\"%s\"; fontsize=12] " n1 d n2 l
+         sprintf "%O %O %O" n1 d n2
 
 type Statements(statements : Statement list) =
    member __.Statements = statements
@@ -384,6 +385,7 @@ type Overlap =
       let s = 
          match this with
          | PrismN n -> sprintf "prism%i" n
+         | OverlapScale -> sprintf "scale"
          | _ -> (getUnionCaseName this).ToLowerInvariant()
       if prefix > 0 then
          sprintf "%i:%s" prefix s

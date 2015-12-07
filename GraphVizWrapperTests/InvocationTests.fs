@@ -5,6 +5,9 @@ open NUnit.Framework
 open FsUnit
 open GraphVizWrapper
 
+// Note some of these tests can start failing if Windows decides to change the way
+// it renders jpgs/pngs.
+
 [<AutoOpen>]
 module __ =
    [<Literal>]
@@ -162,5 +165,5 @@ type InvocationTests() =
          | SuccessText _ -> [||]
          | SuccessBinary content -> content
          | Failure _ -> [||]
-      //File.WriteAllBytes(@"C:\temp\valid-dot-one-node.jpg", actual)
+      // File.WriteAllBytes(@"C:\temp\valid-dot-one-node.jpg", actual)
       actual |> should equal expected

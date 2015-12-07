@@ -43,7 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain.fs" />
-    <None Include="Domain.fsx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GraphVizWrapper\GraphVizWrapper.fsproj">

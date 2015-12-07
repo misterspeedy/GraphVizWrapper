@@ -48,12 +48,10 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ResourceManager.fs" />
-    <Compile Include="ResourceManager2.fs" />
     <Compile Include="ArchieItself.fs" />
     <Compile Include="ArchieToGraph.fs" />
-    <Compile Include="Program.fs" />
     <None Include="App.config" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Archie\Archie.fsproj">

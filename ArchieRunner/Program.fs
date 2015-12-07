@@ -1,10 +1,10 @@
 ﻿open ArchieToGraph
-open Archie.ResourceManager2
+//open Archie.ResourceManagerSpark
 open Archie.Itself
+//open Archie.Optout
 
 [<EntryPoint>]
 let main argv = 
-    // resourceManager
     archie
     |> ArchitectureToGraph
     |> ViewGraph

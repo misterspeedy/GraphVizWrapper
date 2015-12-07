@@ -1,7 +1,4 @@
-﻿#if INTERACTIVE
-#else
-namespace GraphVizWrapper
-#endif
+﻿namespace GraphVizWrapper
 
 open System
 open Microsoft.FSharp.Reflection
@@ -28,6 +25,7 @@ module __ =
             dict
             |> Seq.map (fun kvp -> 
                let valueStr =
+                  // TODO active pattern
                   if kvp.Value |> isNumber || kvp.Value |> isBool then
                      kvp.Value
                   else
@@ -78,19 +76,29 @@ type Directionality =
       | Directed -> "->"
       | Undirected -> "--"
 
+type ArrowType =
+| Normal
+| Inverted
+    override this.ToString() =
+        match this with
+        | Normal -> "normal"
+        | Inverted -> "inv"
+
 type Label = string
 
 type Statement =
 | NodeStatement of GraphNode.GraphNode
-| EdgeStatement of Label * GraphNode.GraphNode * GraphNode.GraphNode * Directionality
+| EdgeStatement of Label * GraphNode.GraphNode * GraphNode.GraphNode * Directionality * ArrowType
    override this.ToString() =
       match this with
       | NodeStatement n -> 
          //sprintf "\"%O\" [shape=box] " n.Id
          sprintf "%O" n
       // TODO unit test for labelling etc
-      | EdgeStatement(l, n1, n2, d) ->
-         // For Archie: sprintf "%O %O %O [label=\"%s\"; fontsize=12] " n1 d n2 l
+      | EdgeStatement(l, n1, n2, d, at) ->
+         // For Archie: 
+//         sprintf "%O %O %O [fontsize=12; dir=\"both\"; arrowhead=\"%O\"; arrowtail=\"dot\"; ] " n1 d n2 at 
+//         sprintf "%O %O %O [label=\"%s\"; fontsize=12; dir=\"both\"; arrowhead=\"%O\"; arrowtail=\"dot\"; ] " n1 d n2 l at 
          sprintf "%O %O %O" n1 d n2
 
 type Statements(statements : Statement list) =
@@ -608,6 +616,27 @@ type Splines =
       | NoEdges -> "none"
       | _ -> (getUnionCaseName this).ToLowerInvariant()
 
+type StartType =
+| Regular
+| Self
+| Random of float option
+   override this.ToString() =
+      match this with
+      | Random(Some(n)) -> sprintf "%s%g" ((getUnionCaseName this).ToLowerInvariant()) n
+      | _ -> (getUnionCaseName this).ToLowerInvariant()
+
+type ViewPort =
+| HW of Height:float * Width:float
+| HWZ of Height:float * Width:float * Zoom:float
+| HWZXY of Height:float * Width:float * Zoom:float * X:float * Y:float
+| HWZNode of Height:float * Width:float * Zoom:float * CenterNode:string
+    override this.ToString() =
+        match this with
+        | HW(h, w) -> sprintf "%g,%g" h w
+        | HWZ(h, w, z) -> sprintf "%g,%g,%g" h w z
+        | HWZXY(h, w, z, x, y) -> sprintf "%g,%g,%g,%g,%g" h w z x y
+        | HWZNode(h, w, z, n) ->  sprintf "%g,%g,%g,'%s'" h w z n
+
 type Graph
    (
       id : Id, 
@@ -704,7 +733,16 @@ type Graph
    let defaultShowBoxes = ShowBoxes.Off
    let defaultSize : Size option = None
    let defaultSmoothing : Smoothing option = None
+   let defaultSortV = 0
    let defaultSplines : Splines option = None
+   let defaultStart : StartType option = None
+   let defaultStyle = ""
+   let defaultStyleSheet = ""
+   let defaultTarget = ""
+   let defaultTrueColor : bool option = None
+   let defaultViewPort : ViewPort option = None
+   let defaultVoroMargin = 0.05
+   let defaultXDotVersion = ""
    new (id : Id, strictness: Strictness, kind : GraphKind) =
       Graph(id, strictness, kind, Statements([])) 
 //         Attributes(AttributeStatementType.Graph, []),
@@ -825,7 +863,16 @@ type Graph
    member val ShowBoxes = defaultShowBoxes with get, set
    member val Size = defaultSize with get, set
    member val Smoothing = defaultSmoothing with get, set
+   member val SortV = defaultSortV with get, set
    member val Splines = defaultSplines with get, set
+   member val Start = defaultStart with get, set
+   member val Style = defaultStyle with get, set
+   member val StyleSheet = defaultStyleSheet with get, set
+   member val Target = defaultTarget with get, set
+   member val TrueColor = defaultTrueColor with get, set
+   member val ViewPort = defaultViewPort with get, set
+   member val VoroMargin = defaultVoroMargin with get, set
+   member val XDotVersion = defaultXDotVersion with get, set
    member private this.GraphAttributes =
       let dict = Dictionary<string, string>()
       let addIf v dv name =
@@ -834,6 +881,10 @@ type Graph
       let addIfS v name =
          match v with
          | Some x -> dict.[name] <- x.ToString()
+         | _ -> ()
+      let addIfSLower v name =
+         match v with
+         | Some x -> dict.[name] <- x.ToString().ToLowerInvariant()
          | _ -> ()
       let addIfB v dv name =
          if v <> dv then
@@ -928,8 +979,17 @@ type Graph
       addIf this.ShowBoxes defaultShowBoxes "showboxes"
       addIfS this.Size "size"
       addIfS this.Smoothing "smoothing"
+      addIf this.SortV defaultSortV "sortv"
       // TODO add start attribute
       addIfS this.Splines "splines"
+      addIfS this.Start "start"
+      addIf this.Style defaultStyle "style"
+      addIf this.StyleSheet defaultStyleSheet "stylesheet"
+      addIf this.Target defaultTarget "target"
+      addIfSLower this.TrueColor "truecolor"
+      addIfS this.ViewPort "viewport"
+      addIf this.VoroMargin defaultVoroMargin "voro_margin"
+      addIf this.XDotVersion defaultXDotVersion "xdotversion"
 
       dict |> dictToAttrList
 //   member __.GraphAttributes = graphAttributes

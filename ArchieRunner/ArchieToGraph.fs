@@ -10,6 +10,7 @@ let ComponentKindToShape = function
 | Processor -> GraphNode.Shape.Box 
 | UserInterface -> GraphNode.Shape.MSquare
 | Queue -> GraphNode.Shape.Cds
+| WebSite -> GraphNode.Shape.Box
 
 let ArchitectureToGraph (architecture : Architecture) : CommandResult =
 
@@ -31,7 +32,15 @@ let ArchitectureToGraph (architecture : Architecture) : CommandResult =
         |> Seq.map (fun (user, activity, provider) ->
             let n1 = GraphNode.GraphNode(Id user.Name)
             let n2 = GraphNode.GraphNode(Id provider.Name)
-            EdgeStatement(activity.Name, n1, n2, Directionality.Directed)
+            // TODO move this
+            let at = 
+                match activity.Kind with
+                | DataEntryUi  -> ArrowType.Normal
+                | Command      -> ArrowType.Normal
+                | Query        -> ArrowType.Inverted
+                | Upload       -> ArrowType.Normal
+                | CommandQuery -> ArrowType.Normal
+            EdgeStatement(activity.Name, n1, n2, Directionality.Directed, at)
         )
 
     let graph =

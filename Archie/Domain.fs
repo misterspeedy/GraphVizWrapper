@@ -1,10 +1,13 @@
 ﻿namespace Archie
 
+open System
+
 type Name = string
 
 type ConnectionKind =
 | InProcess
 | Http
+| Ftp
 | AzureServiceBus
 | Sql
 | ShellToExe
@@ -15,10 +18,13 @@ type ComponentKind =
 | Processor
 | UserInterface
 | Queue
+| WebSite
 
 type ActivityKind =
+| DataEntryUi
 | Command
 | Query
+| Upload
 | CommandQuery
 
 type Activity =

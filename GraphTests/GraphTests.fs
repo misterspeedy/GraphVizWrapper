@@ -1,5 +1,6 @@
 ﻿module GraphTests
 
+open System
 open System.Drawing
 open NUnit.Framework
 open FsUnit
@@ -7,7 +8,6 @@ open GraphVizWrapper
 
 // TODO
 // Graph 'start' attribute is missing
-// Added graph 'splines' attribute - needs unit tests
 
 [<AutoOpen>]
 module __ =
@@ -987,6 +987,126 @@ module __ =
       {\r\n\
       \x20\x20smoothing = \"triangle\";\r\n\r\n\
       }"
+   let emptyGraphWithSortV = 
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20sortv = 3;\r\n\r\n\
+      }"
+   let emptyGraphWithSplinesCurved =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20splines = \"curved\";\r\n\r\n\
+      }"
+   let emptyGraphWithSplinesCompound =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20splines = \"compound\";\r\n\r\n\
+      }"
+   let emptyGraphWithSplinesLine =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20splines = \"line\";\r\n\r\n\
+      }"
+   let emptyGraphWithSplinesNoEdges =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20splines = \"none\";\r\n\r\n\
+      }"
+   let emptyGraphWithSplinesOrtho =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20splines = \"ortho\";\r\n\r\n\
+      }"
+   let emptyGraphWithSplinesPolyLine =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20splines = \"polyline\";\r\n\r\n\
+      }"
+   let emptyGraphWithSplinesSpline =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20splines = \"spline\";\r\n\r\n\
+      }"
+   let emptyGraphWithStartRegular =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20start = \"regular\";\r\n\r\n\
+      }"
+   let emptyGraphWithStartSelf =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20start = \"self\";\r\n\r\n\
+      }"
+   let emptyGraphWithStartRandomNoSeed =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20start = \"random\";\r\n\r\n\
+      }"
+   let emptyGraphWithStartRandomSeed =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20start = \"random1.23\";\r\n\r\n\
+      }"
+   let emptyGraphWithStyleInvis =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20style = \"invis\";\r\n\r\n\
+      }"
+   let emptyGraphWithStyleSheet =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20stylesheet = \"c:\\temp\\stylesheet.txt\";\r\n\r\n\
+      }"
+   let emptyGraphWithTarget =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20target = \"http://target.com\";\r\n\r\n\
+      }"
+   let emptyGraphWithTrueColorTrue =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20truecolor = true;\r\n\r\n\
+      }"
+   let emptyGraphWithTrueColorFalse =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20truecolor = false;\r\n\r\n\
+      }"
+   let emptyGraphWithViewPortXY =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20viewport = \"1.2,3.4\";\r\n\r\n\
+      }"
+   let emptyGraphWithViewPortHW =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20viewport = \"1.2,3.4,5.6\";\r\n\r\n\
+      }"
+   let emptyGraphWithViewPortHWZ =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20viewport = \"1.2,3.4,5.6\";\r\n\r\n\
+      }"
+   let emptyGraphWithViewPortHWZXY =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20viewport = \"1.2,3.4,5.6,7.8,9.1\";\r\n\r\n\
+      }"
+   let emptyGraphWithViewPortHWZCenterNode =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20viewport = \"1.2,3.4,5.6,'A Node'\";\r\n\r\n\
+      }"
+   let emptyGraphWithVoroMargin =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20voro_margin = 1.2;\r\n\r\n\
+      }"
+   let emptyGraphWithXDotVersion =
+      "graph \"id\"\r\n\
+      {\r\n\
+      \x20\x20xdotversion = \"XDot Version\";\r\n\r\n\
+      }"
 
 [<TestFixture>]
 type GraphTests() =
@@ -1036,7 +1156,7 @@ type GraphTests() =
       let expected = oneEdgeGraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
-            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node1"), GraphNode.GraphNode(Id "node2"), Directionality.Undirected))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node1"), GraphNode.GraphNode(Id "node2"), Directionality.Undirected, Normal))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1045,8 +1165,8 @@ type GraphTests() =
       let expected = twoEdgeGraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
-            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node1"), GraphNode.GraphNode(Id "node2"), Directionality.Undirected))
-            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node3"), GraphNode.GraphNode(Id "node4"), Directionality.Undirected))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node1"), GraphNode.GraphNode(Id "node2"), Directionality.Undirected, Normal))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node3"), GraphNode.GraphNode(Id "node4"), Directionality.Undirected, Normal))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -1055,8 +1175,8 @@ type GraphTests() =
       let expected = twoEdgeDigraph
       let sut = 
          Graph(Id "id", Strictness.NonStrict, GraphKind.Digraph)
-            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node1"), GraphNode.GraphNode(Id "node2"), Directionality.Directed))
-            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node3"), GraphNode.GraphNode(Id "node4"), Directionality.Directed))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node1"), GraphNode.GraphNode(Id "node2"), Directionality.Directed, Normal))
+            .WithStatement(EdgeStatement("", GraphNode.GraphNode(Id "node3"), GraphNode.GraphNode(Id "node4"), Directionality.Directed, Normal))
       let actual = sut.ToString()
       actual |> should equal expected
 
@@ -2473,6 +2593,164 @@ type GraphTests() =
    member __.``We can set the smoothing attribute to a value of 'triangle'``() =
       let expected = emptyGraphWithSmoothingTriangle
       let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Smoothing=Some(Smoothing.Triangle))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the sortv attribute to a non-default value``() =
+      let expected = emptyGraphWithSortV
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, SortV=3)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+//
+
+   [<Test>]
+   member __.``We can set the splines attribute to a value of 'curved'``() =
+      let expected = emptyGraphWithSplinesCurved
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Splines=Some(Splines.Curved))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the splines attribute to a value of 'compound'``() =
+      let expected = emptyGraphWithSplinesCompound
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Splines=Some(Splines.Compound))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the splines attribute to a value of 'line'``() =
+      let expected = emptyGraphWithSplinesLine
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Splines=Some(Splines.Line))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the splines attribute to a value of 'none'``() =
+      let expected = emptyGraphWithSplinesNoEdges
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Splines=Some(Splines.NoEdges))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the splines attribute to a value of 'ortho'``() =
+      let expected = emptyGraphWithSplinesOrtho
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Splines=Some(Splines.Ortho))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the splines attribute to a value of 'polyline'``() =
+      let expected = emptyGraphWithSplinesPolyLine
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Splines=Some(Splines.PolyLine))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the splines attribute to a value of 'spline'``() =
+      let expected = emptyGraphWithSplinesSpline
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Splines=Some(Splines.Spline))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the start attribute to a value of 'regular'``() =
+      let expected = emptyGraphWithStartRegular
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Start=Some(StartType.Regular))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the start attribute to a value of 'self'``() =
+      let expected = emptyGraphWithStartSelf
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Start=Some(StartType.Self))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the start attribute to a value of 'random' with no seed``() =
+      let expected = emptyGraphWithStartRandomNoSeed
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Start=Some(StartType.Random None))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the start attribute to a value of 'random' with a seed``() =
+      let expected = emptyGraphWithStartRandomSeed
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Start=Some(StartType.Random(Some(1.23))))
+      let actual = sut.ToString()
+      actual |> should equal expected
+      
+   [<Test>]
+   member __.``We can set the style attribute to a value of 'invis'``() =
+      let expected = emptyGraphWithStyleInvis
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Style="invis")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the stylesheet attribute to a non-default value``() =
+      let expected = emptyGraphWithStyleSheet
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph)
+      // For some reason can't populate StyleSheet property in initialization expression:
+      sut.StyleSheet <- @"c:\temp\stylesheet.txt"
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the target attribute to a non-default value``() =
+      let expected = emptyGraphWithTarget
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, Target="http://target.com")
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set the truecolor attribute to a value of true``() =
+      let expected = emptyGraphWithTrueColorTrue
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, TrueColor=Some true)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set a viewport with a width and height``() =
+      let expected = emptyGraphWithViewPortXY
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ViewPort=Some(ViewPort.HW(1.2, 3.4)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set a viewport with a width, height and zoom``() =
+      let expected = emptyGraphWithViewPortHWZ
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ViewPort=Some(ViewPort.HWZ(1.2, 3.4, 5.6)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set a viewport with a width, height, zoom and position``() =
+      let expected = emptyGraphWithViewPortHWZXY
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ViewPort=Some(ViewPort.HWZXY(1.2, 3.4, 5.6, 7.8, 9.1)))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set a viewport with a width, height, zoom and center node``() =
+      let expected = emptyGraphWithViewPortHWZCenterNode
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, ViewPort=Some(ViewPort.HWZNode(1.2, 3.4, 5.6, "A Node")))
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set a viewport with a Voronoi margin``() =
+      let expected = emptyGraphWithVoroMargin
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, VoroMargin=1.2)
+      let actual = sut.ToString()
+      actual |> should equal expected
+
+   [<Test>]
+   member __.``We can set a the xdot version to a non default value``() =
+      let expected = emptyGraphWithXDotVersion
+      let sut = Graph(Id "id", Strictness.NonStrict, GraphKind.Graph, XDotVersion="XDot Version")
       let actual = sut.ToString()
       actual |> should equal expected
 
